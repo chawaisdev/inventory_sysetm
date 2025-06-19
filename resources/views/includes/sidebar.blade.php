@@ -24,8 +24,8 @@
                  </svg>
              </div>
              <li class="slide__category"><span class="category-name">Main</span></li>
-                <ul class="main-menu ">
-                    <li class="slide ">
+                <ul class="main-menu">
+                    <li class="slide">
                         <a href="{{ url('dashboard') }}" class="side-menu__item">
                             <i class="bx bx-home side-menu__icon"></i>
                             <span class="side-menu__label">Dashboard</span>
@@ -40,17 +40,23 @@
                     </li>
 
                     <li class="slide mt-2">
-                        <a href="{{ url('chapter') }}" class="side-menu__item">
-                            <i class="bx bx-task side-menu__icon"></i>
-                            <span class="side-menu__label">Chapter</span>
+                        <a href="{{ url('sale') }}" class="side-menu__item">
+                            <i class="bx bx-cart side-menu__icon fs-17"></i>
+                            <span class="side-menu__label">Sale</span>
                         </a>
                     </li>
 
+                    <li class="slide mt-2">
+                        <a href="{{ url('purchase') }}" class="side-menu__item">
+                            <i class="bx bx-package side-menu__icon fs-17"></i>
+                            <span class="side-menu__label">Purchase</span>
+                        </a>
+                    </li>
 
                     <li class="slide mt-2">
-                        <a href="{{ url('points/reward') }}" class="side-menu__item">
-                            <i class="bx bx-party side-menu__icon"></i>
-                            <span class="side-menu__label">Reward</span>
+                        <a href="{{ url('return') }}" class="side-menu__item">
+                            <i class="bx bx-undo side-menu__icon fs-17"></i>
+                            <span class="side-menu__label">Return</span>
                         </a>
                     </li>
 
