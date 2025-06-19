@@ -33,10 +33,11 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Sr #</th>
-                                    <th scope="col">Profile Pic</th>
+                                    <th scope="col">User Type</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Age</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Phone</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -49,16 +50,11 @@
                                     @foreach ($users as $user)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>
-                                                <img src="{{ asset($user->profile_pic) }}" alt="Profile Picture"
-                                                    width="50" height="50"
-                                                    style="border-radius: 50%; object-fit: cover;">
-                                            </td>
-
-
+                                            <td>{{ $user->user_type }}</td>
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
-                                            <td>{{ $user->age }}</td>
+                                            <td>{{ $user->address }}</td>
+                                            <td>{{ $user->phone }}</td>
                                             <td>
                                                 <!-- DELETE USER BUTTON -->
                                                 <form action="{{ route('adduser.destroy', $user->id) }}" method="POST"
