@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\AddUserController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::resource('brands', BrandController::class);
+Route::resource('adduser', AddUserController::class);
 
 
 
