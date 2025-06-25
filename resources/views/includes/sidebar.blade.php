@@ -39,12 +39,6 @@
                         </a>
                     </li>
 
-                    <li class="slide mt-2">
-                        <a href="{{ url('sale') }}" class="side-menu__item">
-                            <i class="bx bx-cart side-menu__icon fs-17"></i>
-                            <span class="side-menu__label">Sale</span>
-                        </a>
-                    </li>
 
                     <li class="slide mt-2">
                         <a href="{{ url('purchase') }}" class="side-menu__item">
@@ -53,6 +47,13 @@
                         </a>
                     </li>
 
+                    <li class="slide mt-2">
+                        <a href="{{ url('sale') }}" class="side-menu__item">
+                            <i class="bx bx-cart side-menu__icon fs-17"></i>
+                            <span class="side-menu__label">Sale</span>
+                        </a>
+                    </li>
+                    
                     <li class="slide mt-2">
                         <a href="{{ url('return') }}" class="side-menu__item">
                             <i class="bx bx-undo side-menu__icon fs-17"></i>
