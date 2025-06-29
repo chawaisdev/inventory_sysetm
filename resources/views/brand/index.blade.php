@@ -100,7 +100,7 @@
     }
 
     function openEditModal(brand) {
-        $('#brandForm').attr('action', '/brand/' + brand.id);
+        $('#brandForm').attr('action', '/brands/' + brand.id);
         $('#formMethod').val('PUT');
         $('#brandModalLabel').text('Edit Brand');
         $('#brand_name').val(brand.brand_name);

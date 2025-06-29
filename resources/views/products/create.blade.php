@@ -21,6 +21,15 @@
                     <form action="{{ route('products.store') }}" method="POST">
                         @csrf
                         <div class="row">
+                            <div class="form-group">
+                                <label for="brand_id">Brand</label>
+                                <select name="brand_id" class="form-control">
+                                    <option value="">Select Brand</option>
+                                    @foreach($brands as $brand)
+                                        <option value="{{ $brand->id }}">{{ $brand->brand_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <div class="mb-3 col-6">
                                 <label class="form-label">Name</label>
