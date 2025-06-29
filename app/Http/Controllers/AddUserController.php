@@ -25,7 +25,6 @@ class AddUserController extends Controller
     // Store new customer
     public function store(Request $request)
     {
-        // Validation
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required',
@@ -33,28 +32,14 @@ class AddUserController extends Controller
             'user_type' => 'required|in:customer,supplier',
         ]);
 
-        // Start: Save new customer
         $user = new User();
         $user->name = $request->name;
         $user->phone = $request->phone;
         $user->address = $request->address;
         $user->user_type = $request->user_type;
-
-        // Generate unique email from name
-        $baseEmail = Str::slug($request->name, '.') . '@gmail.com';
-        $email = $baseEmail;
-        $counter = 1;
-        while (User::where('email', $email)->exists()) {
-            $email = Str::slug($request->name, '.') . $counter . '@gmail.com';
-            $counter++;
-        }
-        $user->email = $email;
-        $user->password = Hash::make(
-            $request->user_type === 'customer' ? 'customer123#' : 'supplier123#'
-        );
-
         $user->save();
-        return redirect()->route('adduser.index')->with('success', 'Customer added successfully.');
+
+        return redirect()->route('adduser.index')->with('success', 'User added successfully.');
     }
 
     // Show edit form for customer
@@ -67,7 +52,6 @@ class AddUserController extends Controller
     // Update customer
     public function update(Request $request, $id)
     {
-        // Validation
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required',
@@ -75,27 +59,14 @@ class AddUserController extends Controller
             'user_type' => 'required|in:customer,supplier',
         ]);
 
-        // Start: Update existing customer
         $user = User::findOrFail($id);
         $user->name = $request->name;
         $user->phone = $request->phone;
         $user->address = $request->address;
         $user->user_type = $request->user_type;
-
-        // Generate unique email from name
-        $baseEmail = Str::slug($request->name, '.') . '@gmail.com';
-        $email = $baseEmail;
-        $counter = 1;
-        while (User::where('email', $email)->where('id', '!=', $id)->exists()) {
-            $email = Str::slug($request->name, '.') . $counter . '@gmail.com';
-            $counter++;
-        }
-        $user->email = $email;
-        $user->password = Hash::make(
-            $request->user_type === 'customer' ? 'customer123#' : 'supplier123#'
-        );
         $user->save();
-        return redirect()->route('adduser.index')->with('success', 'Customer updated successfully.');
+
+        return redirect()->route('adduser.index')->with('success', 'User updated successfully.');
     }
 
     // Delete customer

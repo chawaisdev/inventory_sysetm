@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::resource('brands', BrandController::class);
 Route::resource('adduser', AddUserController::class);
 Route::resource('products', ProductController::class);
+Route::resource('brands', BrandController::class);
 
 
 
