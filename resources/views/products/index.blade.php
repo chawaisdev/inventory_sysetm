@@ -41,23 +41,24 @@
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
-                            {{-- <tbody>
-                                @if ($users->isEmpty())
+                            <tbody>
+                                @if ($products->isEmpty())
                                     <tr>
                                         <td colspan="4" class="text-center">No users found</td>
                                     </tr>
                                 @else
-                                    @foreach ($users as $user)
+                                    @foreach ($products as $products)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $user->user_type }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->address }}</td>
-                                            <td>{{ $user->phone }}</td>
+                                            <td>{{ $products->brand_id }}</td>
+                                            <td>{{ $products->name }}</td>
+                                            <td>{{ $products->purchase_price }}</td>
+                                            <td>{{ $products->sale_price }}</td>
+                                            <td>{{ $products->stock }}</td>
+                                            <td>{{ $products->unit }}</td>
                                             <td>
                                                 <!-- DELETE USER BUTTON -->
-                                                <form action="{{ route('adduser.destroy', $user->id) }}" method="POST"
+                                                <form action="{{ route('adduser.destroy', $products->id) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure you want to delete this user?');"
                                                     style="display: inline;">
                                                     @csrf
@@ -68,7 +69,7 @@
                                                 </form>
 
                                                 <!-- EDIT USER BUTTON -->
-                                                <a href="{{ route('adduser.edit', $user->id) }}"
+                                                <a href="{{ route('adduser.edit', $products->id) }}"
                                                     class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pen-to-square"></i>
                                                 </a>
@@ -76,7 +77,7 @@
                                         </tr>
                                     @endforeach
                                 @endif
-                            </tbody> --}}
+                            </tbody>
                         </table>
                     </div>
                 </div>
