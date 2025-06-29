@@ -35,9 +35,9 @@
                                     <th scope="col">Sr #</th>
                                     <th scope="col">User Type</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
                                     <th scope="col">Address</th>
                                     <th scope="col">Phone</th>
+                                    <th scope="col">Created At</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -52,9 +52,9 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $user->user_type }}</td>
                                             <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
                                             <td>{{ $user->address }}</td>
                                             <td>{{ $user->phone }}</td>
+                                            <td>{{ $user->created_at }}</td>
                                             <td>
                                                 <!-- DELETE USER BUTTON -->
                                                 <form action="{{ route('adduser.destroy', $user->id) }}" method="POST"

@@ -18,9 +18,9 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card bg-white shadow p-4">
-<form action="{{ route('adduser.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('adduser.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @method('POST')
+                        @method('PUT')
 
                         <div class="row">
                             <div class="mb-3 col-6">
@@ -30,19 +30,13 @@
                             </div>
 
                             <div class="mb-3 col-6">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" placeholder="Enter email"
-                                    value="{{ old('email', $user->email) }}" required>
-                            </div>
-
-                            <div class="mb-3 col-6">
                                 <label for="phone" class="form-label">Phone</label>
                                 <input type="text" name="phone" class="form-control" placeholder="Enter phone"
                                     value="{{ old('phone', $user->phone) }}" required>
                             </div>
 
                             <div class="mb-3 col-6">
-                                <label for="profile_pic" class="form-label">Profile Pic</label>
+                                <label for="address" class="form-label">Address</label>
                                 <input type="text" name="address" class="form-control" placeholder="Enter address"
                                     value="{{ old('address', $user->address) }}" required>
                             </div>

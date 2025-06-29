@@ -42,6 +42,12 @@ class AddUserController extends Controller
         return redirect()->route('adduser.index')->with('success', 'User added successfully.');
     }
 
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return view('adduser.index', compact('user'));
+    }   
+
     // Show edit form for customer
     public function edit($id)
     {
