@@ -33,6 +33,7 @@
 
         <!-- STICKY JS -->
         <script src="/assets/sticky.js"></script>
+        <script src="/assets/js/custome.js"></script>
 
         <!-- APP JS -->
         <link rel="modulepreload" href="/assets/app-3cade095.js" />
