@@ -33,11 +33,12 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Sr #</th>
-                                    <th scope="col">User Type</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Address</th>
-                                    <th scope="col">Phone</th>
+                                    <th scope="col">Brand Name</th>
+                                    <th scope="col">Product Name</th>
+                                    <th scope="col">Purchase Price</th>
+                                    <th scope="col">Sale Price</th>
+                                    <th scope="col">Stock</th>
+                                    <th scope="col">Unit</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -50,7 +51,7 @@
                                     @foreach ($products as $products)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $products->brand_id }}</td>
+                                            <td>{{ $products->brand ? $products->brand->brand_name : 'N/A' }}</td>
                                             <td>{{ $products->name }}</td>
                                             <td>{{ $products->purchase_price }}</td>
                                             <td>{{ $products->sale_price }}</td>

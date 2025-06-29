@@ -48,6 +48,7 @@ class ProductController extends Controller
         $products->sale_price = $request->sale_price;
         $products->stock = $request->stock;
         $products->unit = $request->unit;
+        $products->save(); // ✅ Add this line to save the product
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
