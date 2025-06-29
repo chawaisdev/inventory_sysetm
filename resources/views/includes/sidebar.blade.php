@@ -44,7 +44,7 @@
 
                  <!-- Product Add -->
                  <li class="slide mt-2">
-                     <a href="{{ url('add-product') }}" class="side-menu__item">
+                     <a href="{{ url('products') }}" class="side-menu__item">
                          <i class="bx bx-plus side-menu__icon fs-17"></i>
                          <span class="side-menu__label">Add Product</span>
                      </a>
