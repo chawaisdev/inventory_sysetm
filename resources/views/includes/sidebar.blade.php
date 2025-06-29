@@ -29,7 +29,7 @@
                  <!-- Dashboard -->
                  <li class="slide">
                      <a href="{{ url('dashboard') }}" class="side-menu__item">
-                         <i class="bx bx-home side-menu__icon"></i>
+                         <i class="bx bx-home-alt-2 side-menu__icon"></i>
                          <span class="side-menu__label">Dashboard</span>
                      </a>
                  </li>
@@ -37,14 +37,15 @@
                  <!-- Add User -->
                  <li class="slide mt-2">
                      <a href="{{ url('adduser') }}" class="side-menu__item">
-                         <i class="bx bxs-user-plus side-menu__icon fs-17"></i>
+                         <i class="bx bx-user-plus side-menu__icon"></i>
                          <span class="side-menu__label">Add User</span>
                      </a>
                  </li>
 
-                <li class="slide mt-2">
+                 <!-- Brand -->
+                 <li class="slide mt-2">
                      <a href="{{ url('brands') }}" class="side-menu__item">
-                         <i class="bx bxs-user-plus side-menu__icon fs-17"></i>
+                         <i class="bx bx-purchase-tag side-menu__icon"></i>
                          <span class="side-menu__label">Brand</span>
                      </a>
                  </li>
@@ -52,43 +53,45 @@
                  <!-- Product Add -->
                  <li class="slide mt-2">
                      <a href="{{ url('products') }}" class="side-menu__item">
-                         <i class="bx bx-plus side-menu__icon fs-17"></i>
+                         <i class="bx bx-cube side-menu__icon"></i>
                          <span class="side-menu__label">Add Product</span>
                      </a>
                  </li>
 
                  <!-- Supplier Panel Dropdown -->
                  <li class="slide mt-2">
-                     <a href="#supplierMenu" class="side-menu__item" data-bs-toggle="collapse">
-                         <i class="bx bx-package side-menu__icon fs-17"></i>
-                         <span class="side-menu__label">Supplier Panel</span>
-                         <i class="bx bx-chevron-down ms-auto"></i>
+                     <a href="#supplierMenu" class="side-menu__item" data-bs-toggle="collapse" aria-expanded="false">
+                        <i class="bx bx-truck side-menu__icon"></i>
+                        <span class="side-menu__label">Supplier Panel</span>
+                        <i class="bx bx-chevron-down ms-auto"></i>
                      </a>
-                     <ul class="collapse px-3" id="supplierMenu">
-                         <li><a class="dropdown-item mt-1" href="{{ url('purchase') }}">Purchase</a></li>
-                         <li><a class="dropdown-item mt-1" href="{{ url('purchase-items') }}">Purchase Items</a></li>
-                         <li><a class="dropdown-item mt-1" href="{{ url('purchase-return') }}">Purchase Return</a></li>
+                     <ul class="collapse list-unstyled" id="supplierMenu">
+                         <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase') }}">Purchase</a></li>
+                         <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase-items') }}">Purchase Items</a>
+                         </li>
+                         <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase-return') }}">Purchase Return</a>
+                         </li>
                      </ul>
                  </li>
 
                  <!-- Customer Panel Dropdown -->
                  <li class="slide mt-2">
-                     <a href="#customerMenu" class="side-menu__item" data-bs-toggle="collapse">
-                         <i class="bx bx-cart side-menu__icon fs-17"></i>
+                     <a href="#customerMenu" class="side-menu__item" data-bs-toggle="collapse" aria-expanded="false">
+                         <i class="bx bx-user side-menu__icon"></i>
                          <span class="side-menu__label">Customer Panel</span>
                          <i class="bx bx-chevron-down ms-auto"></i>
                      </a>
-                     <ul class="collapse px-3" id="customerMenu">
-                         <li><a class="dropdown-item mt-1" href="{{ url('sale') }}">Sale</a></li>
-                         <li><a class="dropdown-item mt-1" href="{{ url('sale-items') }}">Sale Items</a></li>
-                         <li><a class="dropdown-item mt-1" href="{{ url('sale-return') }}">Sale Return</a></li>
+                     <ul class="collapse list-unstyled" id="customerMenu">
+                         <li><a class="dropdown-item px-4 py-2" href="{{ url('sale') }}">Sale</a></li>
+                         <li><a class="dropdown-item px-4 py-2" href="{{ url('sale-items') }}">Sale Items</a></li>
+                         <li><a class="dropdown-item px-4 py-2" href="{{ url('sale-return') }}">Sale Return</a></li>
                      </ul>
                  </li>
 
                  <!-- Reports -->
                  <li class="slide mt-2">
                      <a href="{{ url('report') }}" class="side-menu__item">
-                         <i class="bx bx-file side-menu__icon fs-17"></i>
+                         <i class="bx bx-bar-chart side-menu__icon"></i>
                          <span class="side-menu__label">Reports</span>
                      </a>
                  </li>
@@ -98,7 +101,7 @@
                      <li class="slide mt-2">
                          <a href="#" class="side-menu__item"
                              onclick="event.preventDefault(); document.getElementById('logout-link').submit();">
-                             <i class="bx bx-log-out side-menu__icon fs-17"></i>
+                             <i class="bx bx-log-out side-menu__icon"></i>
                              <span class="side-menu__label">Logout</span>
                          </a>
                          <form id="logout-link" action="{{ route('logout') }}" method="POST" style="display: none;">
