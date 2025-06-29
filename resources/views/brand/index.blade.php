@@ -1,48 +1,111 @@
 @extends('layouts.app')
 
 @section('title')
-    User Index
+    Brand Index
 @endsection
 
 @section('body')
+<div class="container-fluid">
+    <!-- PAGE HEADER -->
+    <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Brand Index</li>
+            </ol>
+        </nav>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">Add Brand</button>
+    </div>
 
-    <div class="container-fluid">
-        <!-- PAGE HEADER AND ADD BUTTON -->
-        <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
-            <nav>
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">User Index</li>
-                </ol>
-            </nav>
-            <a href="{{ route('adduser.create') }}" class="btn btn-primary btn-sm">
-                Add User
-            </a>
-        </div>
-
-        <!-- USER TABLE -->
-        <div class="col-xl-12">
-            <div class="card custom-card overflow-hidden">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h6>All Users</h6>
-                </div>
-                <!-- TABLE DATA -->
-                <div class="card-body p-2">
-                    <div class="table-responsive">
-                        <table id="example" class="table table-hover text-nowrap">
-                            <thead>
+    <!-- TABLE -->
+    <div class="col-xl-12">
+        <div class="card custom-card overflow-hidden">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6>All Brands</h6>
+            </div>
+            <div class="card-body p-2">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th scope="col">Sr #</th>
+                                <th scope="col">Brand Name</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($brands as $index => $brand)
                                 <tr>
-                                    <th scope="col">Sr #</th>
-                                    <th scope="col">Category Name</th>
-                                    <th scope="col">Brand</th>
-                                    <th scope="col">Created at</th>
-                                    <th scope="col">Action</th>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $brand->brand_name }}</td>
+                                    <td>{{ $brand->created_at->format('d-m-Y') }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info" onclick="openEditModal({{ $brand }})">Edit</button>
+                                        <form action="{{ route('brands.destroy', $brand->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
-                            </thead>
-                        </table>
-                    </div>
+                            @endforeach
+                            @if ($brands->isEmpty())
+                                <tr>
+                                    <td colspan="4" class="text-center">No brands found.</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" id="brandModal" tabindex="-1" role="dialog" aria-labelledby="brandModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form id="brandForm" method="POST" action="">
+            @csrf
+            <input type="hidden" name="_method" value="POST" id="formMethod">
+            <input type="hidden" name="id" id="brand_id">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="brandModalLabel">Add Brand</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="brand_name">Brand Name</label>
+                        <input type="text" class="form-control" name="brand_name" id="brand_name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function openAddModal() {
+        $('#brandForm').attr('action', '{{ route("brands.store") }}');
+        $('#formMethod').val('POST');
+        $('#brandModalLabel').text('Add Brand');
+        $('#brand_name').val('');
+        $('#brand_id').val('');
+        $('#brandModal').modal('show');
+    }
+
+    function openEditModal(brand) {
+        $('#brandForm').attr('action', '/brand/' + brand.id);
+        $('#formMethod').val('PUT');
+        $('#brandModalLabel').text('Edit Brand');
+        $('#brand_name').val(brand.brand_name);
+        $('#brand_id').val(brand.id);
+        $('#brandModal').modal('show');
+    }
+</script>
 @endsection

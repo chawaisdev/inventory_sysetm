@@ -42,6 +42,13 @@
                      </a>
                  </li>
 
+                <li class="slide mt-2">
+                     <a href="{{ url('brands') }}" class="side-menu__item">
+                         <i class="bx bxs-user-plus side-menu__icon fs-17"></i>
+                         <span class="side-menu__label">Brand</span>
+                     </a>
+                 </li>
+
                  <!-- Product Add -->
                  <li class="slide mt-2">
                      <a href="{{ url('products') }}" class="side-menu__item">
