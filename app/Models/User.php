@@ -45,5 +45,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+    public function latestPurchase()
+{
+    return $this->hasOne(Purchase::class)->latestOfMany();
+}
 }

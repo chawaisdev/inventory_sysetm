@@ -13,10 +13,16 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        $users = User::all();
-        $purchases = Purchase::with('user')->get(); // eager load user to optimize queries
-        return view('purchase.index', compact('purchases', 'users'));
+        $purchases = Purchase::with('user')
+            ->whereIn('id', function ($query) {
+            $query->selectRaw('MAX(id)')
+            ->from('purchases')
+            >groupBy('user_id');
+            })
+            ->get();
+        return view('purchase.index', compact('purchases'));
     }
+
 
 
 

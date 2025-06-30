@@ -43,33 +43,34 @@
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($purchases as $index => $purchase)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $purchase->invoice_no }}</td>
-                                        <td>{{ $purchase->user->name ?? 'N/A' }}</td>
-                                        <td>{{ number_format($purchase->total_amount, 2) }}</td>
-                                        <td>{{ number_format($purchase->paid_amount, 2) }}</td>
-                                        <td>{{ number_format($purchase->due_amount, 2) }}</td>
-                                        <td>{{ ucfirst($purchase->payment_method) }}</td>
-                                        <td>{{ $purchase->date->format('Y-m-d') }}</td>
-                                        <td>{{ $purchase->note }}</td>
-                                        <td>
-                                            <!-- Example action buttons -->
-                                            <a href="{{ route('purchase.edit', $purchase->id) }}"
-                                                class="btn btn-sm btn-warning">Edit</a>
-                                            <form action="{{ route('purchase.destroy', $purchase->id) }}" method="POST"
-                                                style="display:inline-block;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button onclick="return confirm('Are you sure?')"
-                                                    class="btn btn-sm btn-danger">Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
+<tbody>
+    @foreach ($purchases as $index => $purchase)
+        <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ $purchase->invoice_no }}</td>
+            <td>{{ $purchase->user->name ?? 'N/A' }}</td>
+            <td>{{ number_format($purchase->total_amount, 2) }}</td>
+            <td>{{ number_format($purchase->paid_amount, 2) }}</td>
+            <td>{{ number_format($purchase->due_amount, 2) }}</td>
+            <td>{{ ucfirst($purchase->payment_method) }}</td>
+            <td>{{ $purchase->date->format('Y-m-d') }}</td>
+            <td>{{ $purchase->note }}</td>
+            <td>
+                <a href="{{ route('purchase.edit', $purchase->id) }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <form action="{{ route('purchase.destroy', $purchase->id) }}" method="POST" style="display:inline-block;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
                         </table>
 
                     </div>
