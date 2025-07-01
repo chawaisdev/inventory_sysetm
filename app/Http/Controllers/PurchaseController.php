@@ -85,7 +85,13 @@ class PurchaseController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $purchases = Purchase::with('user', 'items')->findOrFail($id);
+        $totalSales = Purchase::sum('total_amount');
+        $paidAmount = Purchase::sum('paid_amount');
+        $dueAmount = Purchase::sum('due_amount');
+        $totalOrders = Purchase::count();
+        $supplierName = $purchases->user->name ?? 'N/A';
+        return view('purchase.show', compact('purchases', 'totalSales', 'paidAmount', 'dueAmount', 'totalOrders', 'supplierName'));
     }
 
     /**
