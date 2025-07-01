@@ -83,24 +83,24 @@ class PurchaseController extends Controller
     /**
      * Display the specified resource.
      */
-public function show()
-{
-    $purchases = Purchase::with('user')
-        ->whereHas('user', function ($query) {
-            $query->where('user_type', 'supplier');
-        })
-        ->get();
+    public function show()
+    {
+        $purchases = Purchase::with('user')
+            ->whereHas('user', function ($query) {
+                $query->where('user_type', 'supplier');
+            })
+            ->get();
 
-    $totalSales = $purchases->sum('total_amount');
-    $paidAmount = $purchases->sum('paid_amount');
-    $dueAmount = $purchases->sum('due_amount');
-    $totalOrders = $purchases->count();
+        $totalSales = $purchases->sum('total_amount');
+        $paidAmount = $purchases->sum('paid_amount');
+        $dueAmount = $purchases->sum('due_amount');
+        $totalOrders = $purchases->count();
 
-    $supplierNames = $purchases->pluck('user.name')->unique();
-    $supplierName = $supplierNames->count() === 1 ? $supplierNames->first() ?? 'N/A' : 'Multiple Suppliers';
+        $supplierNames = $purchases->pluck('user.name')->unique();
+        $supplierName = $supplierNames->count() === 1 ? $supplierNames->first() ?? 'N/A' : 'Multiple Suppliers';
 
-    return view('purchase.show', compact('purchases', 'totalSales', 'paidAmount', 'dueAmount', 'totalOrders', 'supplierName'));
-}
+        return view('purchase.show', compact('purchases', 'totalSales', 'paidAmount', 'dueAmount', 'totalOrders', 'supplierName'));
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -168,4 +168,11 @@ public function show()
 
         return redirect()->route('purchase.index')->with('success', 'Purchase deleted successfully.');
     }
+
+    public function getPurchaseItems($id)
+    {
+        $purchase = Purchase::with('items')->findOrFail($id);
+        return view('purchase.items', compact('purchase'));
+    }
+
 }
