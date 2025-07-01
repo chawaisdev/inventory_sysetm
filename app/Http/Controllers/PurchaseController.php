@@ -83,16 +83,24 @@ class PurchaseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        $purchases = Purchase::with('user', 'items')->findOrFail($id);
-        $totalSales = Purchase::sum('total_amount');
-        $paidAmount = Purchase::sum('paid_amount');
-        $dueAmount = Purchase::sum('due_amount');
-        $totalOrders = Purchase::count();
-        $supplierName = $purchases->user->name ?? 'N/A';
-        return view('purchase.show', compact('purchases', 'totalSales', 'paidAmount', 'dueAmount', 'totalOrders', 'supplierName'));
-    }
+public function show()
+{
+    $purchases = Purchase::with('user')
+        ->whereHas('user', function ($query) {
+            $query->where('user_type', 'supplier');
+        })
+        ->get();
+
+    $totalSales = $purchases->sum('total_amount');
+    $paidAmount = $purchases->sum('paid_amount');
+    $dueAmount = $purchases->sum('due_amount');
+    $totalOrders = $purchases->count();
+
+    $supplierNames = $purchases->pluck('user.name')->unique();
+    $supplierName = $supplierNames->count() === 1 ? $supplierNames->first() ?? 'N/A' : 'Multiple Suppliers';
+
+    return view('purchase.show', compact('purchases', 'totalSales', 'paidAmount', 'dueAmount', 'totalOrders', 'supplierName'));
+}
 
     /**
      * Show the form for editing the specified resource.

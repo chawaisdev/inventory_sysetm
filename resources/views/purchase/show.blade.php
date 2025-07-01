@@ -15,7 +15,7 @@
             </nav>
         </div>
         <!-- PAGE HEADER -->
-        <h3>Supplier: {{ $supplierName }}</h3>
+        <h3>Name: {{ $supplierName }}</h3>
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xl-6">
                 <div class="card custom-card">
@@ -101,11 +101,7 @@
                         <div class="row">
                             <div class="col-3 d-flex align-items-center justify-content-center px-0">
                                 <span class="rounded p-3 bg-success-transparent">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="#000000"
-                                        viewBox="0 0 24 24">
-                                        <path
-                                            d="M12 6c1.1 1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                                    </svg>
+                                    <i class="fas fa-shopping-cart fa-2x"></i>
                                 </span>
                             </div>
                             <div class="col-9 px-0">
@@ -125,7 +121,6 @@
         <!-- PURCHASE TABLE -->
         <div class="col-xl-12">
             <div class="card custom-card overflow-hidden">
-                <!-- TABLE DATA -->
                 <div class="card-body p-2">
                     <div class="table-responsive">
                         <table id="example" class="table table-hover text-nowrap">
@@ -140,36 +135,37 @@
                                     <th scope="col">Payment Method</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Note</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>{{ $purchases->invoice_no }}</td>
-                                    <td>{{ $purchases->user->name ?? 'N/A' }}</td>
-                                    <td>{{ number_format($purchases->total_amount, 2) }}</td>
-                                    <td>{{ number_format($purchases->paid_amount, 2) }}</td>
-                                    <td>{{ number_format($purchases->due_amount, 2) }}</td>
-                                    <td>{{ ucfirst($purchases->payment_method) }}</td>
-                                    <td>{{ $purchases->date->format('Y-m-d') }}</td>
-                                    <td>{{ $purchases->note }}</td>
-                                    <td>
-                                        <a href="{{ route('purchase.edit', $purchases->id) }}"
-                                            class="btn btn-sm btn-warning">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('purchase.destroy', $purchases->id) }}" method="POST"
-                                            style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Are you sure?')"
-                                                class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                @foreach ($purchases as $key => $purchase)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>{{ $purchase->invoice_no }}</td>
+                                        <td>{{ $purchase->user->name ?? 'N/A' }}</td>
+                                        <td>{{ number_format($purchase->total_amount, 2) }}</td>
+                                        <td>{{ number_format($purchase->paid_amount, 2) }}</td>
+                                        <td>{{ number_format($purchase->due_amount, 2) }}</td>
+                                        <td>{{ ucfirst($purchase->payment_method) }}</td>
+                                        <td>{{ $purchase->date->format('Y-m-d') }}</td>
+                                        <td>{{ $purchase->note ?? 'N/A'}}</td>
+                                        {{-- <td>
+                                            <a href="{{ route('purchase.edit', $purchase->id) }}"
+                                                class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form action="{{ route('purchase.destroy', $purchase->id) }}" method="POST"
+                                                style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" onclick="return confirm('Are you sure?')"
+                                                    class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </td> --}}
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
