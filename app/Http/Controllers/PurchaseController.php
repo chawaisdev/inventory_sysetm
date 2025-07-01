@@ -15,9 +15,9 @@ class PurchaseController extends Controller
     {
         $purchases = Purchase::with('user')
             ->whereIn('id', function ($query) {
-            $query->selectRaw('MAX(id)')
-            ->from('purchases')
-            >groupBy('user_id');
+                $query->selectRaw('MAX(id)')
+                    ->from('purchases')
+                    ->groupBy('user_id');
             })
             ->get();
         return view('purchase.index', compact('purchases'));
@@ -31,8 +31,9 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-        $users = User::all();
-        return view('purchase.create', compact('users'));
+        $users = User::where('user_type', 'supplier')->get();
+        $brand = Brand::all(); 
+        return view('purchase.create', compact('users', 'brand'));
     }
 
     /**
