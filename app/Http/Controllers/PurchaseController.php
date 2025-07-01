@@ -32,8 +32,7 @@ class PurchaseController extends Controller
     public function create()
     {
         $users = User::where('user_type', 'supplier')->get();
-        $brand = Brand::all(); 
-        return view('purchase.create', compact('users', 'brand'));
+        return view('purchase.create', compact('users'));
     }
 
     /**
