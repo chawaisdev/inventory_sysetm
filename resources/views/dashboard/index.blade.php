@@ -2,113 +2,145 @@
 @section('title', 'Dashboard')
 
 @section('body')
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body d-flex align-items-center">
-                    <i class="ti ti-user fs-1 me-3"></i>
-                    <div>
-                        <h6>Total Suppliers</h6>
-                        <h3>{{ $totalSuppliers }}</h3>
+    <div class="container-fluid">
+        <div class="row mb-4">
+            {{-- Total Sales --}}
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xl-6">
+                <div class="card custom-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center justify-content-center px-0">
+                                <span class="rounded p-3 bg-primary-transparent">
+                                    <i class="fas fa-shopping-cart fa-2x text-primary"></i>
+                                </span>
+                            </div>
+                            <div class="col-8 px-0">
+                                <div class="mb-2">Total Sales</div>
+                                <div class="text-muted fs-12">
+                                    <span class="text-dark fw-semibold fs-20">{{ number_format($totalSalesAmount) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Total Purchase --}}
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xl-6">
+                <div class="card custom-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center justify-content-center px-0">
+                                <span class="rounded p-3 bg-success-transparent">
+                                    <i class="fas fa-shopping-bag fa-2x text-success"></i>
+                                </span>
+                            </div>
+                            <div class="col-8 px-0">
+                                <div class="mb-2">Total Purchases</div>
+                                <div class="text-muted fs-12">
+                                    <span
+                                        class="text-dark fw-semibold fs-20">{{ number_format($totalPurchaseAmount) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Total Suppliers --}}
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xl-6">
+                <div class="card custom-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center justify-content-center px-0">
+                                <span class="rounded p-3 bg-warning-transparent">
+                                    <i class="fas fa-user-tie fa-2x text-warning"></i>
+                                </span>
+                            </div>
+                            <div class="col-8 px-0">
+                                <div class="mb-2">Total Suppliers</div>
+                                <div class="text-muted fs-12">
+                                    <span class="text-dark fw-semibold fs-20">{{ $totalSuppliers }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Total Customers --}}
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xl-6">
+                <div class="card custom-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center justify-content-center px-0">
+                                <span class="rounded p-3 bg-info-transparent">
+                                    <i class="fas fa-users fa-2x text-info"></i>
+                                </span>
+                            </div>
+                            <div class="col-8 px-0">
+                                <div class="mb-2">Total Customers</div>
+                                <div class="text-muted fs-12">
+                                    <span class="text-dark fw-semibold fs-20">{{ $totalCustomers }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body d-flex align-items-center">
-                    <i class="ti ti-users fs-1 me-3"></i>
-                    <div>
-                        <h6>Total Customers</h6>
-                        <h3>{{ $totalCustomers }}</h3>
+        <div class="row mb-4">
+            {{-- Low Stock Products --}}
+            <div class="col-md-4">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <h5 class="card-title">Low Stock Products (&lt; 25)</h5>
+                    </div>
+                    <div class="card-body">
+                        @if ($lowStockProducts->isEmpty())
+                            <p class="text-muted">All products are sufficiently stocked.</p>
+                        @else
+                            <ul class="list-group mb-3">
+                                @foreach ($lowStockProducts as $product)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ $product->name }}
+                                        <span class="badge bg-danger rounded-pill">{{ $product->stock }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                            <div class="d-flex justify-content-center">
+                                {{ $lowStockProducts->appends(['sold' => request('sold')])->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body d-flex align-items-center">
-                    <i class="ti ti-package fs-1 me-3"></i>
-                    <div>
-                        <h6>Total Products</h6>
-                        <h3>{{ $totalProducts }}</h3>
+
+            {{-- Sold Products --}}
+            <div class="col-md-8">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <h5 class="card-title">Sold Products</h5>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body d-flex align-items-center">
-                    <i class="ti ti-coin fs-1 me-3"></i>
-                    <div>
-                        <h6>Total Purchase</h6>
-                        <h3>Rs. {{ number_format($totalPurchaseAmount) }}</h3>
+                    <div class="card-body">
+                        @if ($soldProducts->isEmpty())
+                            <p class="text-muted">No products sold yet.</p>
+                        @else
+                            <ul class="list-group mb-3">
+                                @foreach ($soldProducts as $saleItem)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ $saleItem->product->name ?? 'N/A' }}
+                                        <span class="badge bg-success rounded-pill">Qty: {{ $saleItem->quantity }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                            <div class="d-flex justify-content-center">
+                                {{ $soldProducts->appends(['lowstock' => request('lowstock')])->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card bg-dark text-white">
-                <div class="card-body d-flex align-items-center">
-                    <i class="ti ti-chart-bar fs-1 me-3"></i>
-                    {{-- <div>
-                        <h6>Last 7 Days Sale</h6>
-                        <h3>Rs. {{ number_format($last7DaysSale) }}</h3>
-                    </div> --}}
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card bg-secondary text-white">
-                <div class="card-body d-flex align-items-center">
-                    <i class="ti ti-calendar fs-1 me-3"></i>
-                    {{-- <div>
-                        <h6>This Month Sale</h6>
-                        <h3>Rs. {{ number_format($thisMonthSale) }}</h3>
-                    </div> --}}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @if($lowStockProducts->count())
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white d-flex justify-content-between">
-                    <span><i class="ti ti-alert-triangle me-2"></i>Low Stock Alert</span>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($lowStockProducts as $item)
-                            <tr>
-                                <td>{{ $item->product_name }}</td>
-                                <td class="text-danger fw-bold">{{ $item->quantity }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    <script>
-                        setTimeout(function () {
-                            alert("⚠️ Low stock detected! Please restock.");
-                        }, 500);
-                    </script>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-</div>
 @endsection

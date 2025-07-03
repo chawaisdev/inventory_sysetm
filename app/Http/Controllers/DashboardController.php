@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Product;
-use App\Models\Purchase;
 use App\Models\Sale;
+use App\Models\Purchase;
+use App\Models\SaleItem; // Ensure you have this model
 use App\Models\PurchaseItem;
 use Carbon\Carbon;
 
@@ -18,19 +19,21 @@ class DashboardController extends Controller
         $totalProducts = Product::count();
 
         $totalPurchaseAmount = Purchase::sum('total_amount');
-        // $last7DaysSale = Sale::where('created_at', '>=', Carbon::now()->subDays(7))->sum('total_amount');
-        // $thisMonthSale = Sale::whereMonth('created_at', Carbon::now()->month)->sum('total_amount');
+        $totalSalesAmount = Sale::sum('total_amount');
 
-        $lowStockProducts = PurchaseItem::where('quantity', '<', 10)->get();
+        $lowStockProducts = Product::where('stock', '<', 25)->paginate(2);
+
+        // Assuming sale_items table has product_id
+        $soldProducts = SaleItem::with('product')->paginate(5); // Show 5 per page
 
         return view('dashboard.index', compact(
             'totalSuppliers',
             'totalCustomers',
             'totalProducts',
             'totalPurchaseAmount',
-            // 'last7DaysSale',
-            // 'thisMonthSale',
-            'lowStockProducts'
+            'totalSalesAmount',
+            'lowStockProducts',
+            'soldProducts'
         ));
     }
 }
