@@ -5,6 +5,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\AddUserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -14,7 +15,7 @@ Route::resource('products', ProductController::class);
 Route::resource('brands', BrandController::class);
 Route::resource('purchase', PurchaseController::class);
 Route::get('purchase-items/{id}', [PurchaseController::class, 'getPurchaseItems'])->name('purchase.items');
-
+Route::get('index', [DashboardController::class, 'index'])->name('dashboard.index');
 
 
 
