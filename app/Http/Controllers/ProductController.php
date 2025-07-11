@@ -48,6 +48,7 @@ class ProductController extends Controller
         $products->sale_price = $request->sale_price;
         $products->stock = $request->stock;
         $products->unit = $request->unit;
+        $products->discount = $request->discount;
         $products->save(); // ✅ Add this line to save the product
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
@@ -64,10 +65,12 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        //
+        $brands = Brand::all();
+        return view('products.edit', compact('product', 'brands'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -91,6 +94,7 @@ class ProductController extends Controller
         $product->sale_price = $request->sale_price;
         $product->stock = $request->stock;
         $product->unit = $request->unit;
+        $product->discount = $request->discount;
         $product->save();
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');

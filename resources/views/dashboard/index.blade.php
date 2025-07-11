@@ -3,6 +3,14 @@
 
 @section('body')
     <div class="container-fluid">
+        <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
+            <nav>
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                </ol>
+            </nav>
+        </div>
         <div class="row mb-4">
             {{-- Total Sales --}}
             <div class="col-lg-6 col-sm-6 col-md-6 col-xl-6">

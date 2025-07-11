@@ -28,7 +28,7 @@
 
                  <!-- Dashboard -->
                  <li class="slide">
-                     <a href="{{ url('dashboard') }}" class="side-menu__item">
+                     <a href="{{ url('index') }}" class="side-menu__item">
                          <i class="bx bx-home-alt-2 side-menu__icon"></i>
                          <span class="side-menu__label">Dashboard</span>
                      </a>

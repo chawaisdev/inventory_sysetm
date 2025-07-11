@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    User Index
+    Product Index
 @endsection
 
 @section('body')
@@ -16,7 +16,7 @@
                 </ol>
             </nav>
             <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
-                Add User
+                Add Product
             </a>
         </div>
 
@@ -39,6 +39,7 @@
                                     <th scope="col">Sale Price</th>
                                     <th scope="col">Stock</th>
                                     <th scope="col">Unit</th>
+                                    <th scope="col">Discount</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -57,9 +58,10 @@
                                             <td>{{ $products->sale_price }}</td>
                                             <td>{{ $products->stock }}</td>
                                             <td>{{ $products->unit }}</td>
+                                            <td>{{ $products->discount }}</td>
                                             <td>
                                                 <!-- DELETE USER BUTTON -->
-                                                <form action="{{ route('adduser.destroy', $products->id) }}" method="POST"
+                                                <form action="{{ route('products.destroy', $products->id) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure you want to delete this user?');"
                                                     style="display: inline;">
                                                     @csrf
@@ -70,7 +72,7 @@
                                                 </form>
 
                                                 <!-- EDIT USER BUTTON -->
-                                                <a href="{{ route('adduser.edit', $products->id) }}"
+                                                <a href="{{ route('products.edit', $products->id) }}"
                                                     class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pen-to-square"></i>
                                                 </a>

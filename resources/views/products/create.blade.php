@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Item Index
+    Product Create
 @endsection
 
 @section('body')
@@ -10,7 +10,7 @@
             <nav>
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                    <li class="breadcrumb-item active" aria-current="page">Product Create</li>
                 </ol>
             </nav>
         </div>
@@ -70,6 +70,14 @@
                                 <label class="form-label">Unit</label>
                                 <input type="text" name="unit" class="form-control" value="{{ old('unit') }}">
                                 @error('unit')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3 col-6">
+                                <label class="form-label">Discount</label>
+                                <input type="text" name="discount" class="form-control" value="{{ old('discount') }}">
+                                @error('discount')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
