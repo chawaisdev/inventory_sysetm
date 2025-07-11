@@ -13,6 +13,7 @@ class PurchaseItem extends Model
         'product_name',
         'price',
         'quantity',
+        'discount', // ✅ MUST be fillable
         'line_total',
     ];
 

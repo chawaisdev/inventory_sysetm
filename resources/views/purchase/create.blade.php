@@ -37,6 +37,7 @@
                                 <th>Product Name</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
+                                <th>Discount (%)</th>
                                 <th>Line Total</th>
                                 <th><button type="button" id="add_row" class="btn btn-sm btn-success">+</button></th>
                             </tr>
@@ -46,6 +47,7 @@
                                 <td><input type="text" name="product_name[]" class="form-control" required></td>
                                 <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
                                 <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
+                                <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0"></td>
                                 <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
                                 <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
                             </tr>
@@ -99,7 +101,12 @@
     function calculateRowTotal(row) {
         let price = parseFloat(row.querySelector('.price')?.value) || 0;
         let quantity = parseFloat(row.querySelector('.quantity')?.value) || 0;
-        let total = price * quantity;
+        let discountPercent = parseFloat(row.querySelector('.discount')?.value) || 0;
+
+        let subTotal = price * quantity;
+        let discountAmount = (subTotal * discountPercent) / 100;
+        let total = subTotal - discountAmount;
+
         row.querySelector('.line_total').value = total.toFixed(2);
         calculateGrandTotal();
     }
@@ -118,7 +125,11 @@
     }
 
     document.getElementById('product_rows').addEventListener('input', function(e) {
-        if (e.target.classList.contains('price') || e.target.classList.contains('quantity')) {
+        if (
+            e.target.classList.contains('price') ||
+            e.target.classList.contains('quantity') ||
+            e.target.classList.contains('discount')
+        ) {
             let row = e.target.closest('tr');
             calculateRowTotal(row);
         }
@@ -132,6 +143,7 @@
                 <td><input type="text" name="product_name[]" class="form-control" required></td>
                 <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
                 <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
+                <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0"></td>
                 <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
                 <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
             </tr>

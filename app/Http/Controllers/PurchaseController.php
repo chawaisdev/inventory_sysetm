@@ -50,6 +50,7 @@ class PurchaseController extends Controller
             'product_name' => 'required|array',
             'price' => 'required|array',
             'quantity' => 'required|array',
+            'discount' => 'required|array',
             'line_total' => 'required|array',
         ]);
 
@@ -70,6 +71,7 @@ class PurchaseController extends Controller
                 'product_name' => $name,
                 'price' => $request->price[$index],
                 'quantity' => $request->quantity[$index],
+                'discount' => $request->discount[$index], // ✅ Save discount
                 'line_total' => $request->line_total[$index],
             ]);
         }
