@@ -36,7 +36,7 @@
 
                  <!-- Add User -->
                  <li class="slide mt-2">
-                     <a href="{{ url('adduser') }}" class="side-menu__item">
+                     <a href="{{ route('adduser.index') }}" class="side-menu__item">
                          <i class="bx bx-user-plus side-menu__icon"></i>
                          <span class="side-menu__label">Add User</span>
                      </a>
@@ -44,7 +44,7 @@
 
                  <!-- Brand -->
                  <li class="slide mt-2">
-                     <a href="{{ url('brands') }}" class="side-menu__item">
+                     <a href="{{ route('brands.index') }}" class="side-menu__item">
                          <i class="bx bx-purchase-tag side-menu__icon"></i>
                          <span class="side-menu__label">Brand</span>
                      </a>
@@ -52,7 +52,7 @@
 
                  <!-- Product Add -->
                  <li class="slide mt-2">
-                     <a href="{{ url('products') }}" class="side-menu__item">
+                     <a href="{{ route('products.index') }}" class="side-menu__item">
                          <i class="bx bx-cube side-menu__icon"></i>
                          <span class="side-menu__label">Add Product</span>
                      </a>
@@ -66,7 +66,7 @@
                         <i class="bx bx-chevron-down ms-auto"></i>
                      </a>
                      <ul class="collapse list-unstyled" id="supplierMenu">
-                         <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase') }}">Purchase</a></li>
+                         <li><a class="dropdown-item px-4 py-2" href="{{ route('purchase.index') }}">Purchase</a></li>
                          <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase-items') }}">Purchase Items</a>
                          </li>
                          <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase-return') }}">Purchase Return</a>
@@ -82,7 +82,7 @@
                          <i class="bx bx-chevron-down ms-auto"></i>
                      </a>
                      <ul class="collapse list-unstyled" id="customerMenu">
-                         <li><a class="dropdown-item px-4 py-2" href="{{ url('sale') }}">Sale</a></li>
+                         <li><a class="dropdown-item px-4 py-2" href="{{ route('sales.index') }}">Sale</a></li>
                          <li><a class="dropdown-item px-4 py-2" href="{{ url('sale-items') }}">Sale Items</a></li>
                          <li><a class="dropdown-item px-4 py-2" href="{{ url('sale-return') }}">Sale Return</a></li>
                      </ul>

@@ -85,25 +85,25 @@ class PurchaseController extends Controller
     /**
      * Display the specified resource.
      */
-public function show($user_id)
-{
-    // Get all purchases for this supplier user_id
-    $purchases = Purchase::with('user')
-        ->where('user_id', $user_id)
-        ->whereHas('user', function ($query) {
-            $query->where('user_type', 'supplier');
-        })
-        ->get();
+    public function show($user_id)
+    {
+        // Get all purchases for this supplier user_id
+        $purchases = Purchase::with('user')
+            ->where('user_id', $user_id)
+            ->whereHas('user', function ($query) {
+                $query->where('user_type', 'supplier');
+            })
+            ->get();
 
-    $totalSales = $purchases->sum('total_amount');
-    $paidAmount = $purchases->sum('paid_amount');
-    $dueAmount = $purchases->sum('due_amount');
-    $totalOrders = $purchases->count();
+        $totalSales = $purchases->sum('total_amount');
+        $paidAmount = $purchases->sum('paid_amount');
+        $dueAmount = $purchases->sum('due_amount');
+        $totalOrders = $purchases->count();
 
-    return view('purchase.show', compact(
-        'purchases', 'totalSales', 'paidAmount', 'dueAmount', 'totalOrders'
-    ));
-}
+        return view('purchase.show', compact(
+            'purchases', 'totalSales', 'paidAmount', 'dueAmount', 'totalOrders'
+        ));
+    }
 
 
     /**
@@ -173,10 +173,12 @@ public function show($user_id)
         return redirect()->route('purchase.index')->with('success', 'Purchase deleted successfully.');
     }
 
-    public function getPurchaseItems($id)
-    {
-        $purchase = Purchase::with('items')->findOrFail($id);
-        return view('purchase.items', compact('purchase'));
-    }
+public function getPurchaseItems()
+{
+    $items = PurchaseItem::with('purchase.user')->get();
+
+    return view('purchase.items', compact('items'));
+}
+
 
 }
