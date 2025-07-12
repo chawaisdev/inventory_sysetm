@@ -183,12 +183,43 @@ class PurchaseController extends Controller
         return redirect()->route('purchase.index')->with('success', 'Purchase deleted successfully.');
     }
 
-public function getPurchaseItems()
-{
-    $items = PurchaseItem::with('purchase.user')->get();
+    public function getPurchaseItems()
+    {
+        $items = PurchaseItem::with('purchase.user')->get();
 
-    return view('purchase.items', compact('items'));
-}
+        return view('purchase.items', compact('items'));
+    }
 
+
+    public function return(Request $request)
+    {
+        $request->validate([
+            'purchase_id' => 'required|exists:purchases,id',
+            'product_name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0.01',
+            'quantity' => 'required|integer|min:1',
+            'return_date' => 'required|date',
+        ]);
+
+        $returnAmount = $request->price * $request->quantity;
+
+        PurchaseReturn::create([
+            'purchase_id' => $request->purchase_id,
+            'product_name' => $request->product_name,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'return_amount' => $returnAmount,
+            'return_date' => $request->return_date,
+        ]);
+
+        // Optional: update Purchase total_amount
+        $purchase = Purchase::findOrFail($request->purchase_id);
+        $purchase->total_amount -= $returnAmount;
+        $purchase->due_amount = $purchase->total_amount - $purchase->paid_amount;
+        $purchase->save();
+
+        return view('purchase.return');
+
+    }
 
 }

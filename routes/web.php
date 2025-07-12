@@ -21,6 +21,7 @@ Route::resource('sales', SaleController::class);
 Route::get('/get-products-by-brand/{brand_id}', [SaleController::class, 'getProductsByBrand']);
 Route::get('/get-product-details/{id}', [SaleController::class, 'getProductDetails']);
 
+Route::get('purchase/return', [PurchaseController::class, 'return'])->name('purchase.return');
 
 
 

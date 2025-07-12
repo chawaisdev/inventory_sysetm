@@ -38,4 +38,9 @@ class Purchase extends Model
         return $this->belongsTo(Brand::class);
     }
     
+    public function returns()
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
+
 }
