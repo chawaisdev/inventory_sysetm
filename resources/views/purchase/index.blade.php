@@ -56,7 +56,7 @@
                                         <td>{{ $purchase->date->format('Y-m-d') }}</td>
                                         <td>{{ $purchase->note }}</td>
                                         <td>
-                                            <a href="{{ route('purchase.show', $purchase->id) }}"
+                                            <a href="{{ route('purchase.show', $purchase) }}"
                                                 class="btn btn-sm btn-warning">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>

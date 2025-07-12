@@ -15,7 +15,7 @@
             </nav>
         </div>
         <!-- PAGE HEADER -->
-        <h3>Name: {{ $supplierName }}</h3>
+        {{-- <h3>Name: {{ $supplierName }}</h3> --}}
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xl-6">
                 <div class="card custom-card">
