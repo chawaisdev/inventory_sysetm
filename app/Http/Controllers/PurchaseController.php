@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Purchase;
 use App\Models\User;
+use App\Models\Transaction;
 use App\Models\PurchaseItem;
 class PurchaseController extends Controller
 {
@@ -75,6 +76,15 @@ class PurchaseController extends Controller
                 'line_total' => $request->line_total[$index],
             ]);
         }
+
+        Transaction::create([
+            'user_id' => $request->user_id,
+            'amount' => $request->paid_amount,
+            'payment_method' => $request->payment_method,
+            'type' => 'credit',
+            'date' => $request->date,
+            'note' => $request->note,
+        ]);
 
         return redirect()->route('purchase.index')->with('success', 'Purchase created successfully.');
     }
