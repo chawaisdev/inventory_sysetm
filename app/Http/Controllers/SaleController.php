@@ -62,6 +62,7 @@ class SaleController extends Controller
             'paid_amount' => 'required|numeric',
             'due_amount' => 'required|numeric',
             'payment_method' => 'required',
+            'discount' => 'required|array',
             'date' => 'required|date',
         ]);
 
@@ -80,6 +81,7 @@ class SaleController extends Controller
             foreach ($request->product_id as $index => $productId) {
                 $quantity = $request->quantity[$index];
                 $price = $request->price[$index];
+                $discount = $request->discount[$index];
 
                 SaleItem::create([
                     'sale_id' => $sale->id,

@@ -27,6 +27,7 @@
                     <th>Stock</th>
                     <th>Price</th>
                     <th>Qty</th>
+                    <th>Discount (%)</th>
                     <th>Line Total</th>
                     <th><button type="button" id="add_row" class="btn btn-sm btn-success">+</button></th>
                 </tr>
@@ -37,7 +38,7 @@
                         <select name="brand_id[]" class="form-control brand-select" required>
                             <option value="">Select Brand</option>
                             @foreach ($brands as $brand)
-                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                <option value="{{ $brand->id }}">{{ $brand->brand_name }}</option>
                             @endforeach
                         </select>
                     </td>
@@ -49,6 +50,7 @@
                     <td><input type="number" name="available_stock[]" class="form-control stock" readonly></td>
                     <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
                     <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
+                    <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0" required></td>
                     <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
                     <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
                 </tr>
@@ -94,7 +96,13 @@
     function calculateRowTotal(row) {
         let price = parseFloat(row.querySelector('.price')?.value) || 0;
         let qty = parseFloat(row.querySelector('.quantity')?.value) || 0;
-        row.querySelector('.line_total').value = (price * qty).toFixed(2);
+        let discount = parseFloat(row.querySelector('.discount')?.value) || 0;
+
+        let subtotal = price * qty;
+        let discountAmount = subtotal * (discount / 100);
+        let total = subtotal - discountAmount;
+
+        row.querySelector('.line_total').value = total.toFixed(2);
         calculateGrandTotal();
     }
 
@@ -118,7 +126,11 @@
                 e.target.value = stock;
             }
         }
-        if (e.target.classList.contains('quantity') || e.target.classList.contains('price')) {
+        if (
+            e.target.classList.contains('quantity') ||
+            e.target.classList.contains('price') ||
+            e.target.classList.contains('discount')
+        ) {
             calculateRowTotal(row);
         }
     });
@@ -147,6 +159,7 @@
                 <td><input type="number" name="available_stock[]" class="form-control stock" readonly></td>
                 <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
                 <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
+                <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0" required></td>
                 <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
                 <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
             </tr>
