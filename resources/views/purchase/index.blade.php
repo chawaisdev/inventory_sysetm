@@ -82,6 +82,11 @@
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </form>
+                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                                data-bs-target="#payModal{{ $purchase->id }}">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                            </button>
+
                                         </td>
                                     </tr>
                                 @endforeach
@@ -92,4 +97,56 @@
             </div>
         </div>
     </div>
+    @foreach ($purchases as $purchase)
+        <!-- Payment Modal -->
+        <div class="modal fade" id="payModal{{ $purchase->id }}" tabindex="-1" aria-labelledby="payModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="{{ route('purchase.payment', $purchase->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Make Payment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Total:</strong> {{ number_format($purchase->total_amount, 2) }}</p>
+                            <p><strong>Paid:</strong> {{ number_format($purchase->paid_amount, 2) }}</p>
+                            <p><strong>Due:</strong> {{ number_format($purchase->due_amount, 2) }}</p>
+
+                            <input type="hidden" name="user_id" value="{{ $purchase->user_id }}">
+
+                            <div class="mb-3">
+                                <label>Payment Amount</label>
+                                <input type="number" step="0.01" class="form-control" name="paid_amount" required
+                                    max="{{ $purchase->due_amount }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Payment Method</label>
+                                <select name="payment_method" class="form-control" required>
+                                    <option value="cash">Cash</option>
+                                    <option value="bank">Bank</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Date</label>
+                                <input type="date" name="date" class="form-control" required
+                                    value="{{ now()->toDateString() }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Note</label>
+                                <textarea name="note" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Submit Payment</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
 @endsection

@@ -22,6 +22,7 @@ Route::get('/get-products-by-brand/{brand_id}', [SaleController::class, 'getProd
 Route::get('/get-product-details/{id}', [SaleController::class, 'getProductDetails']);
 
 Route::get('purchase/return', [PurchaseController::class, 'return'])->name('purchase.return');
+Route::post('/purchase/payment/{purchase}', [PurchaseController::class, 'storePayment'])->name('purchase.payment');
 
 
 

@@ -261,4 +261,31 @@ class PurchaseController extends Controller
 
     }
 
+    public function storePayment(Request $request, Purchase $purchase)
+    {
+        $request->validate([
+            'paid_amount' => 'required|numeric|min:1',
+            'payment_method' => 'required|string',
+            'date' => 'required|date',
+        ]);
+
+        // Store in transactions
+        Transaction::create([
+        'user_id' => $purchase->user_id,  // supplier
+            'purchase_id' => $purchase->id,
+            'amount' => $request->paid_amount,
+            'payment_method' => $request->payment_method,
+            'type' => 'credit',
+            'date' => $request->date,
+            'note' => $request->note,
+        ]);
+
+        // Update purchase paid_amount
+        $purchase->paid_amount += $request->paid_amount;
+        $purchase->due_amount = $purchase->total_amount - $purchase->paid_amount;
+        $purchase->save();
+
+        return redirect()->back()->with('success', 'Payment recorded successfully.');
+    }
+
 }
