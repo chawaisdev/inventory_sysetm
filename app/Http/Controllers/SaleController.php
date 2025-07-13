@@ -30,7 +30,7 @@ class SaleController extends Controller
      */
     public function create()
     {
-        $users = User::all();
+        $users = User::where('user_type', 'customer')->get();
         $brands = Brand::all();
         return view('sales.create', compact('users', 'brands'));
     }

@@ -25,9 +25,6 @@ class PurchaseController extends Controller
         return view('purchase.index', compact('purchases'));
     }
 
-
-
-
     /**
      * Show the form for creating a new resource.
      */
@@ -95,10 +92,6 @@ class PurchaseController extends Controller
         return redirect()->route('purchase.index')->with('success', 'Purchase created successfully.');
     }
 
-
-
-
-
     /**
      * Display the specified resource.
      */
@@ -122,7 +115,6 @@ class PurchaseController extends Controller
         ));
     }
 
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -135,7 +127,6 @@ class PurchaseController extends Controller
 
         return view('purchase.edit', compact('purchase', 'users', 'brands', 'items'));
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -210,7 +201,6 @@ class PurchaseController extends Controller
         return redirect()->route('purchase.index')->with('success', 'Purchase updated successfully.');
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
@@ -228,7 +218,6 @@ class PurchaseController extends Controller
 
         return view('purchase.items', compact('items'));
     }
-
 
     public function return(Request $request)
     {
