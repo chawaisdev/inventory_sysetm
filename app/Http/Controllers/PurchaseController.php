@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Purchase;
 use App\Models\User;
+use App\Models\Brand;
 use App\Models\Transaction;
 use App\Models\PurchaseItem;
 class PurchaseController extends Controller
@@ -33,7 +34,8 @@ class PurchaseController extends Controller
     public function create()
     {
         $users = User::where('user_type', 'supplier')->get();
-        return view('purchase.create', compact('users'));
+        $brands = Brand::all();
+        return view('purchase.create', compact('users', 'brands'));
     }
 
     /**
@@ -43,6 +45,7 @@ class PurchaseController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'brand_id' => 'nullable|exists:brands,id',
             'total_amount' => 'required|numeric',
             'paid_amount' => 'required|numeric',
             'payment_method' => 'required|string|max:50',
@@ -57,6 +60,7 @@ class PurchaseController extends Controller
 
         $purchase = Purchase::create([
             'user_id' => $request->user_id,
+            'brand_id' => $request->brand_id,
             'invoice_no' => 'INV-' . date('Y') . '-' . rand(1000, 9999),
             'total_amount' => $request->total_amount,
             'paid_amount' => $request->paid_amount,
@@ -69,10 +73,11 @@ class PurchaseController extends Controller
         foreach ($request->product_name as $index => $name) {
             PurchaseItem::create([
                 'purchase_id' => $purchase->id,
+                'brand_id' => $request->brand_id[$index],
                 'product_name' => $name,
                 'price' => $request->price[$index],
                 'quantity' => $request->quantity[$index],
-                'discount' => $request->discount[$index], // ✅ Save discount
+                'discount' => $request->discount[$index],
                 'line_total' => $request->line_total[$index],
             ]);
         }

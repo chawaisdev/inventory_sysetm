@@ -84,7 +84,6 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Create Product</button>
                     </form>
-
                 </div>
             </div>
         </div>
