@@ -34,6 +34,7 @@
                                     <th scope="col">Sr #</th>
                                     <th scope="col">Invoice</th>
                                     <th scope="col">Supplier Name</th>
+                                    <th scope="col">Product Names</th> <!-- NEW -->
                                     <th scope="col">Total Amount</th>
                                     <th scope="col">Paid Amount</th>
                                     <th scope="col">Due Amount</th>
@@ -49,6 +50,14 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $purchase->invoice_no }}</td>
                                         <td>{{ $purchase->user->name ?? 'N/A' }}</td>
+
+                                        <!-- Product Names Column -->
+                                        <td>
+                                            @foreach ($purchase->items as $item)
+                                                <span class="badge bg-info text-dark">{{ $item->product_name }}</span>
+                                            @endforeach
+                                        </td>
+
                                         <td>{{ number_format($purchase->total_amount, 2) }}</td>
                                         <td>{{ number_format($purchase->paid_amount, 2) }}</td>
                                         <td>{{ number_format($purchase->due_amount, 2) }}</td>
@@ -60,7 +69,7 @@
                                                 class="btn btn-sm btn-warning">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
-                                             <a href="{{ route('purchase.edit', $purchase->id) }}"
+                                            <a href="{{ route('purchase.edit', $purchase->id) }}"
                                                 class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
@@ -77,9 +86,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-
                         </table>
-
                     </div>
                 </div>
             </div>
