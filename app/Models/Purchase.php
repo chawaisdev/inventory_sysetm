@@ -9,6 +9,7 @@ class Purchase extends Model
     
      protected $fillable = [
         'user_id',
+        'brand_id',
         'invoice_no',
         'total_amount',
         'paid_amount',
@@ -43,4 +44,8 @@ class Purchase extends Model
         return $this->hasMany(PurchaseReturn::class);
     }
 
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class);
+    }
 }

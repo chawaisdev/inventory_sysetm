@@ -10,6 +10,7 @@ class PurchaseItem extends Model
 
      protected $fillable = [
         'purchase_id',
+        'brand_id',
         'product_name',
         'price',
         'quantity',

@@ -45,7 +45,7 @@ class PurchaseController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'brand_id' => 'nullable|exists:brands,id',
+            'brand_id' => 'required|array',
             'total_amount' => 'required|numeric',
             'paid_amount' => 'required|numeric',
             'payment_method' => 'required|string|max:50',
@@ -60,7 +60,6 @@ class PurchaseController extends Controller
 
         $purchase = Purchase::create([
             'user_id' => $request->user_id,
-            'brand_id' => $request->brand_id,
             'invoice_no' => 'INV-' . date('Y') . '-' . rand(1000, 9999),
             'total_amount' => $request->total_amount,
             'paid_amount' => $request->paid_amount,
@@ -82,8 +81,10 @@ class PurchaseController extends Controller
             ]);
         }
 
+        // ✅ Include purchase_id in the transaction
         Transaction::create([
             'user_id' => $request->user_id,
+            'purchase_id' => $purchase->id, // important line
             'amount' => $request->paid_amount,
             'payment_method' => $request->payment_method,
             'type' => 'credit',
@@ -93,6 +94,7 @@ class PurchaseController extends Controller
 
         return redirect()->route('purchase.index')->with('success', 'Purchase created successfully.');
     }
+
 
 
 
@@ -127,9 +129,13 @@ class PurchaseController extends Controller
     public function edit(string $id)
     {
         $users = User::all(); 
+        $brands = Brand::all(); 
         $purchase = Purchase::findOrFail($id);
-        return view('purchase.edit', compact('purchase', 'users'));
+        $items = PurchaseItem::where('purchase_id', $id)->get();
+
+        return view('purchase.edit', compact('purchase', 'users', 'brands', 'items'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -138,6 +144,8 @@ class PurchaseController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'brand_id' => 'required|array',
+            'brand_id.*' => 'required|exists:brands,id',
             'total_amount' => 'required|numeric',
             'paid_amount' => 'required|numeric',
             'payment_method' => 'required|string|max:50',
@@ -146,33 +154,59 @@ class PurchaseController extends Controller
             'product_name' => 'required|array',
             'price' => 'required|array',
             'quantity' => 'required|array',
+            'discount' => 'required|array',
             'line_total' => 'required|array',
         ]);
 
         $purchase = Purchase::findOrFail($id);
-        $purchase->user_id = $request->user_id;
-        $purchase->total_amount = $request->total_amount;
-        $purchase->paid_amount = $request->paid_amount;
-        $purchase->due_amount = $request->total_amount - $request->paid_amount;
-        $purchase->payment_method = $request->payment_method;
-        $purchase->date = $request->date;
-        $purchase->note = $request->note;
-        $purchase->save();
+        $purchase->update([
+            'user_id' => $request->user_id,
+            'total_amount' => $request->total_amount,
+            'paid_amount' => $request->paid_amount,
+            'due_amount' => $request->total_amount - $request->paid_amount,
+            'payment_method' => $request->payment_method,
+            'date' => $request->date,
+            'note' => $request->note,
+        ]);
 
-        // Delete existing purchase items for fresh update
-        $purchase->items()->delete();
+        // Remove old items
+        PurchaseItem::where('purchase_id', $purchase->id)->delete();
 
-        // Insert updated purchase items
+        // Add updated items
         foreach ($request->product_name as $index => $name) {
             PurchaseItem::create([
                 'purchase_id' => $purchase->id,
+                'brand_id' => $request->brand_id[$index],
                 'product_name' => $name,
                 'price' => $request->price[$index],
                 'quantity' => $request->quantity[$index],
+                'discount' => $request->discount[$index],
                 'line_total' => $request->line_total[$index],
             ]);
         }
 
+        $transaction = Transaction::where('purchase_id', $purchase->id)->first();
+
+        if ($transaction) {
+            $transaction->update([
+                'user_id' => $request->user_id,
+                'amount' => $request->paid_amount,
+                'payment_method' => $request->payment_method,
+                'type' => 'credit',
+                'date' => $request->date,
+                'note' => $request->note,
+            ]);
+        } else {
+            Transaction::create([
+                'user_id' => $request->user_id,
+                'purchase_id' => $purchase->id,
+                'amount' => $request->paid_amount,
+                'payment_method' => $request->payment_method,
+                'type' => 'credit',
+                'date' => $request->date,
+                'note' => $request->note,
+            ]);
+        }
         return redirect()->route('purchase.index')->with('success', 'Purchase updated successfully.');
     }
 

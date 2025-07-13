@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
-@section('title')
-    Edit Purchase
-@endsection
+@section('title', 'Edit Purchase')
 
 @section('body')
 <div class="container-fluid">
@@ -10,7 +8,7 @@
         <nav>
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Purchase</li>
+                <li class="breadcrumb-item active">Edit Purchase</li>
             </ol>
         </nav>
     </div>
@@ -36,18 +34,29 @@
                         <thead>
                             <tr>
                                 <th>Product Name</th>
+                                <th>Brand</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
+                                <th>Discount (%)</th>
                                 <th>Line Total</th>
                                 <th><button type="button" id="add_row" class="btn btn-sm btn-success">+</button></th>
                             </tr>
                         </thead>
                         <tbody id="product_rows">
-                            @foreach($purchase->items as $item)
+                            @foreach($items as $index => $item)
                                 <tr>
                                     <td><input type="text" name="product_name[]" class="form-control" value="{{ $item->product_name }}" required></td>
+                                    <td>
+                                        <select name="brand_id[]" class="form-control" required>
+                                            <option value="">Select Brand</option>
+                                            @foreach($brands as $brand)
+                                                <option value="{{ $brand->id }}" {{ $item->brand_id == $brand->id ? 'selected' : '' }}>{{ $brand->brand_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
                                     <td><input type="number" step="0.01" name="price[]" class="form-control price" value="{{ $item->price }}" required></td>
                                     <td><input type="number" name="quantity[]" class="form-control quantity" value="{{ $item->quantity }}" required></td>
+                                    <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="{{ $item->discount }}"></td>
                                     <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" value="{{ $item->line_total }}" readonly></td>
                                     <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
                                 </tr>
@@ -99,10 +108,15 @@
 </div>
 
 <script>
+    const brands = @json($brands);
+
     function calculateRowTotal(row) {
         let price = parseFloat(row.querySelector('.price')?.value) || 0;
         let quantity = parseFloat(row.querySelector('.quantity')?.value) || 0;
-        let total = price * quantity;
+        let discount = parseFloat(row.querySelector('.discount')?.value) || 0;
+        let subtotal = price * quantity;
+        let discountAmount = (subtotal * discount) / 100;
+        let total = subtotal - discountAmount;
         row.querySelector('.line_total').value = total.toFixed(2);
         calculateGrandTotal();
     }
@@ -112,7 +126,6 @@
         document.querySelectorAll('.line_total').forEach(el => {
             total += parseFloat(el.value) || 0;
         });
-
         document.getElementById('total_amount').value = total.toFixed(2);
 
         let paid = parseFloat(document.getElementById('paid_amount').value) || 0;
@@ -121,7 +134,7 @@
     }
 
     document.getElementById('product_rows').addEventListener('input', function(e) {
-        if (e.target.classList.contains('price') || e.target.classList.contains('quantity')) {
+        if (e.target.classList.contains('price') || e.target.classList.contains('quantity') || e.target.classList.contains('discount')) {
             let row = e.target.closest('tr');
             calculateRowTotal(row);
         }
@@ -130,11 +143,22 @@
     document.getElementById('paid_amount').addEventListener('input', calculateGrandTotal);
 
     document.getElementById('add_row').addEventListener('click', function() {
+        let brandOptions = '<option value="">Select Brand</option>';
+        brands.forEach(brand => {
+            brandOptions += `<option value="${brand.id}">${brand.brand_name}</option>`;
+        });
+
         let newRow = `
             <tr>
                 <td><input type="text" name="product_name[]" class="form-control" required></td>
+                <td>
+                    <select name="brand_id[]" class="form-control" required>
+                        ${brandOptions}
+                    </select>
+                </td>
                 <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
                 <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
+                <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0"></td>
                 <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
                 <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
             </tr>
@@ -149,11 +173,10 @@
         }
     });
 
-    // Calculate totals on page load
     window.onload = function() {
         document.querySelectorAll('#product_rows tr').forEach(row => {
             calculateRowTotal(row);
         });
-    };
+    }
 </script>
 @endsection
