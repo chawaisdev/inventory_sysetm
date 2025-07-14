@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\PagesController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -37,6 +38,13 @@ Route::controller(SaleController::class)->group(function () {
     Route::get('get-products-by-brand/{brand_id}', 'getProductsByBrand')->name('sales.products.by.brand');
     Route::get('get-product-details/{id}', 'getProductDetails')->name('sales.product.details');
 });
+
+Route::controller(PagesController::class)->group(function () {
+    Route::get('report', 'salerecord')->name('report.salerecord');
+    Route::get('purchase-record', 'purchaserecord')->name('sales.purchaserecord');
+
+});
+
 Route::resource('sales', SaleController::class);
 
 
