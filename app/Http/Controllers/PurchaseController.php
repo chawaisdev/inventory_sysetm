@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Brand;
 use App\Models\Transaction;
 use App\Models\PurchaseItem;
+use App\Models\PurchaseReturn;
 class PurchaseController extends Controller
 {
     /**
@@ -219,37 +220,6 @@ class PurchaseController extends Controller
         return view('purchase.items', compact('items'));
     }
 
-    public function return(Request $request)
-    {
-        $request->validate([
-            'purchase_id' => 'required|exists:purchases,id',
-            'product_name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0.01',
-            'quantity' => 'required|integer|min:1',
-            'return_date' => 'required|date',
-        ]);
-
-        $returnAmount = $request->price * $request->quantity;
-
-        PurchaseReturn::create([
-            'purchase_id' => $request->purchase_id,
-            'product_name' => $request->product_name,
-            'price' => $request->price,
-            'quantity' => $request->quantity,
-            'return_amount' => $returnAmount,
-            'return_date' => $request->return_date,
-        ]);
-
-        // Optional: update Purchase total_amount
-        $purchase = Purchase::findOrFail($request->purchase_id);
-        $purchase->total_amount -= $returnAmount;
-        $purchase->due_amount = $purchase->total_amount - $purchase->paid_amount;
-        $purchase->save();
-
-        return view('purchase.return');
-
-    }
-
     public function storePayment(Request $request, Purchase $purchase)
     {
         $request->validate([
@@ -275,6 +245,48 @@ class PurchaseController extends Controller
         $purchase->save();
 
         return redirect()->back()->with('success', 'Payment recorded successfully.');
+    }
+
+    public function return(Request $request)
+    {
+        $request->validate([
+            'purchase_id' => 'required|exists:purchases,id',
+            'product_name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0.01',
+            'quantity' => 'required|integer|min:1',
+            'return_date' => 'required|date',
+        ]);
+
+        $returnAmount = $request->price * $request->quantity;
+
+        // Create purchase return record
+        PurchaseReturn::create([
+            'purchase_id' => $request->purchase_id,
+            'product_name' => $request->product_name,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'return_amount' => $returnAmount,
+            'return_date' => $request->return_date,
+        ]);
+
+        // Update Purchase totals
+        $purchase = Purchase::findOrFail($request->purchase_id);
+        $purchase->total_amount -= $returnAmount;
+        $purchase->due_amount = $purchase->total_amount - $purchase->paid_amount;
+        $purchase->save();
+
+        // Add transaction for the return
+        Transaction::create([
+            'user_id' => auth()->id(), // or $purchase->user_id if you want supplier
+            'purchase_id' => $purchase->id,
+            'amount' => $returnAmount,
+            'payment_method' => 'bank', // or 'cash', 'bank', etc.
+            'type' => 'credit',
+            'date' => $request->return_date,
+            'note' => 'Returned: ' . $request->product_name,
+        ]);
+
+        return redirect()->back()->with('success', 'Product returned and records updated.');
     }
 
 }
