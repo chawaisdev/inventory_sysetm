@@ -8,6 +8,7 @@ class PurchaseReturn extends Model
 {
      protected $fillable = [
         'purchase_id',
+        'user_id',
         'product_name',
         'price',
         'quantity',

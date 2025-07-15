@@ -257,36 +257,59 @@ class PurchaseController extends Controller
             'return_date' => 'required|date',
         ]);
 
-        $returnAmount = $request->price * $request->quantity;
+        // Get the purchase and supplier
+        $purchase = Purchase::with('user')->findOrFail($request->purchase_id);
+        $supplierId = $purchase->user_id;
 
-        // Create purchase return record
+        // Get the specific purchase item
+        $item = PurchaseItem::where('purchase_id', $request->purchase_id)
+            ->where('product_name', $request->product_name)
+            ->firstOrFail();
+
+        if ($item->quantity < $request->quantity) {
+            return back()->with('error', 'Return quantity exceeds purchased quantity.');
+        }
+
+        // Calculate actual price after discount per unit
+        $discount = $item->discount ?? 0; // fallback in case it's null
+        $unitNetPrice = $item->price - $discount;
+
+        // Calculate return amount based on net price
+        $returnAmount = $unitNetPrice * $request->quantity;
+
+        // Save to purchase_returns
         PurchaseReturn::create([
             'purchase_id' => $request->purchase_id,
+            'user_id' => $supplierId,
             'product_name' => $request->product_name,
-            'price' => $request->price,
+            'price' => $item->price,
             'quantity' => $request->quantity,
             'return_amount' => $returnAmount,
             'return_date' => $request->return_date,
         ]);
 
-        // Update Purchase totals
-        $purchase = Purchase::findOrFail($request->purchase_id);
+        // Update purchase item
+        $item->quantity -= $request->quantity;
+        $item->line_total = ($item->price - $discount) * $item->quantity;
+        $item->save();
+
+        // Update purchase totals
         $purchase->total_amount -= $returnAmount;
         $purchase->due_amount = $purchase->total_amount - $purchase->paid_amount;
         $purchase->save();
 
-        // Add transaction for the return
+        // Log transaction
         Transaction::create([
-            'user_id' => auth()->id(), // or $purchase->user_id if you want supplier
+            'user_id' => $supplierId,
             'purchase_id' => $purchase->id,
             'amount' => $returnAmount,
-            'payment_method' => 'bank', // or 'cash', 'bank', etc.
+            'payment_method' => 'bank',
             'type' => 'credit',
             'date' => $request->return_date,
             'note' => 'Returned: ' . $request->product_name,
         ]);
 
-        return redirect()->back()->with('success', 'Product returned and records updated.');
+        return redirect()->back()->with('success', 'Product returned and records updated with discount considered.');
     }
 
 }
