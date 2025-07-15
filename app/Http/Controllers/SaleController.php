@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
-use App\Models\Brand;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+
 class SaleController extends Controller
 {
     /**
@@ -32,25 +34,11 @@ class SaleController extends Controller
     {
         $users = User::where('user_type', 'customer')->get();
         $brands = Brand::all();
-        return view('sales.create', compact('users', 'brands'));
+        $products = Product::all();
+
+        return view('sales.create', compact('users', 'brands', 'products'));
     }
 
-    public function getProductsByBrand($brand_id)
-    {
-        return response()->json(Product::where('brand_id', $brand_id)->get());
-    }
-
-    public function getProductDetails($id)
-    {
-        $product = Product::findOrFail($id);
-        return response()->json([
-            'stock' => $product->stock,
-            'sale_price' => $product->sale_price,
-        ]);
-    }
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -81,7 +69,6 @@ class SaleController extends Controller
             foreach ($request->product_id as $index => $productId) {
                 $quantity = $request->quantity[$index];
                 $price = $request->price[$index];
-                $discount = $request->discount[$index];
 
                 SaleItem::create([
                     'sale_id' => $sale->id,
@@ -95,6 +82,16 @@ class SaleController extends Controller
                 $product->stock -= $quantity;
                 $product->save();
             }
+
+            Transaction::create([
+                'user_id' => $request->user_id,
+                'purchase_id' => $sale->id, // can rename this to sale_id if needed
+                'amount' => $request->paid_amount,
+                'payment_method' => $request->payment_method,
+                'type' => 'Credit',
+                'date' => $request->date,
+                'note' => $request->note,
+            ]);
         });
 
         return redirect()->route('sales.index')->with('success', 'Sale created successfully.');
