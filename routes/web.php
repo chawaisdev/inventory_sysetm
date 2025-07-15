@@ -45,6 +45,7 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('purchase-record', 'purchaserecord')->name('sales.purchaserecord');
 
 });
+Route::get('/sales/{id}/receipt', [SaleController::class, 'receipt']);
 
 Route::resource('sales', SaleController::class);
 

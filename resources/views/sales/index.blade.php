@@ -56,8 +56,11 @@
                                         <td>{{ $sale->date->format('Y-m-d') }}</td>
                                         <td>{{ $sale->note }}</td>
                                         <td>
-                                            <a href="{{ route('sales.edit', $sale->id) }}"
-                                                class="btn btn-sm btn-warning">
+                                            <a href="#" class="btn btn-sm btn-info print-btn"
+                                                data-sale-id="{{ $sale->id }}">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                            <a href="{{ route('sales.edit', $sale->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form action="{{ route('sales.destroy', $sale->id) }}" method="POST"
