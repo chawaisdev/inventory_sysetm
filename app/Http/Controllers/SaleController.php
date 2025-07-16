@@ -18,14 +18,15 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $sales = Sale::with('user')
-        ->orderBy('date', 'asc') // oldest first
-        ->get()
-        ->unique('user_id')
-        ->values();
+        $sales = Sale::with(['user', 'saleItems.product']) // eager load product via saleItems
+            ->orderBy('date', 'asc')
+            ->get()
+            ->unique('user_id')
+            ->values();
 
         return view('sales.index', compact('sales'));
     }
+
 
     /**
      * Show the form for creating a new resource.

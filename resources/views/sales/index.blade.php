@@ -34,6 +34,7 @@
                                     <th scope="col">Sr #</th>
                                     <th scope="col">Invoice</th>
                                     <th scope="col">Supplier Name</th>
+                                    <th scope="col">Products</th> <!-- ✅ Added -->
                                     <th scope="col">Total Amount</th>
                                     <th scope="col">Paid Amount</th>
                                     <th scope="col">Due Amount</th>
@@ -49,29 +50,19 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $sale->invoice_no }}</td>
                                         <td>{{ $sale->user->name ?? 'N/A' }}</td>
+                                        <td>
+                                            @foreach ($sale->saleItems as $item)
+                                                <span class="badge bg-secondary">{{ $item->product->name ?? 'N/A' }}</span>
+                                            @endforeach
+                                        </td>
                                         <td>{{ number_format($sale->total_amount, 2) }}</td>
                                         <td>{{ number_format($sale->paid_amount, 2) }}</td>
                                         <td>{{ number_format($sale->due_amount, 2) }}</td>
-                                        <td>{{ ucfirst($sale->payment_method) }}</td>
+                                        <td><span class="badge bg-danger">{{ ucfirst($sale->payment_method) }}</span></td>
                                         <td>{{ $sale->date->format('Y-m-d') }}</td>
                                         <td>{{ $sale->note }}</td>
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-info print-btn"
-                                                data-sale-id="{{ $sale->id }}">
-                                                <i class="fas fa-print"></i>
-                                            </a>
-                                            <a href="{{ route('sales.edit', $sale->id) }}" class="btn btn-sm btn-warning">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <form action="{{ route('sales.destroy', $sale->id) }}" method="POST"
-                                                style="display:inline-block;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Are you sure?')"
-                                                    class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
+                                            <!-- your action buttons here -->
                                         </td>
                                     </tr>
                                 @endforeach
