@@ -97,9 +97,9 @@
     </div>
 </div>
 
-{{-- Pass data to JS --}}
+{{-- Pass products to JS --}}
 <script>
-    const products = @json($products);
+    const products = @json($products); // should include id, name, brand_id, sale_price, purchase_price
 </script>
 
 <script>
@@ -108,7 +108,9 @@
         select.innerHTML = '<option value="">Select Product</option>';
         products.forEach(product => {
             if (product.brand_id == brandId) {
-                select.innerHTML += `<option value="${product.id}">${product.name}</option>`;
+                select.innerHTML += `<option value="${product.id}">
+                    ${product.name} (Sale: ${product.sale_price}, Purchase: ${product.purchase_price})
+                </option>`;
             }
         });
     }
@@ -137,6 +139,24 @@
         document.getElementById('due_amount').value = (total - paid).toFixed(2);
     }
 
+    document.getElementById('product_rows').addEventListener('change', function(e) {
+        if (e.target.classList.contains('brand-select')) {
+            updateProductDropdown(e.target.closest('tr'), e.target.value);
+        }
+
+        if (e.target.classList.contains('product-select')) {
+            const row = e.target.closest('tr');
+            const selectedProductId = e.target.value;
+
+            const selectedProduct = products.find(p => p.id == selectedProductId);
+            if (selectedProduct) {
+                const priceInput = row.querySelector('.price');
+                priceInput.value = selectedProduct.sale_price || 0;
+                calculateRowTotal(row);
+            }
+        }
+    });
+
     document.getElementById('product_rows').addEventListener('input', function(e) {
         if (
             e.target.classList.contains('price') ||
@@ -148,12 +168,6 @@
     });
 
     document.getElementById('paid_amount').addEventListener('input', calculateGrandTotal);
-
-    document.getElementById('product_rows').addEventListener('change', function(e) {
-        if (e.target.classList.contains('brand-select')) {
-            updateProductDropdown(e.target.closest('tr'), e.target.value);
-        }
-    });
 
     document.getElementById('add_row').addEventListener('click', function () {
         let brandOptions = '<option value="">Select Brand</option>';
