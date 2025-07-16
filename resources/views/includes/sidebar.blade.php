@@ -69,7 +69,7 @@
                          <li><a class="dropdown-item px-4 py-2" href="{{ route('purchase.index') }}">Purchase</a></li>
                          <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase-items') }}">Purchase Items</a>
                          </li>
-                         <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase-return') }}">Purchase Return</a>
+                         <li><a class="dropdown-item px-4 py-2" href="{{ url('purchase-returns') }}">Purchase Return</a>
                          </li>
                      </ul>
                  </li>
