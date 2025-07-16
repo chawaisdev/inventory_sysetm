@@ -217,11 +217,10 @@ class SaleController extends Controller
         return redirect()->route('sales.index')->with('success', 'Sale deleted successfully.');
     }
 
-    public function receipt($id)
-{
-    $sale = Sale::with(['user', 'items.product', 'transaction'])->findOrFail($id);
-
-    return view('sales.receipt', compact('sale'));
-}
+    public function getSaleItems(Request $request)
+    {
+        $sale = SaleItem::with('product')->get();
+        return view('sales.item', compact('sale'));
+    }
 
 }

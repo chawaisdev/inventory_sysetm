@@ -34,9 +34,8 @@ Route::controller(PurchaseController::class)->group(function () {
 });
 
 // Sale Controller
-Route::controller(SaleController::class)->group(function () {
-    Route::get('get-products-by-brand/{brand_id}', 'getProductsByBrand')->name('sales.products.by.brand');
-    Route::get('get-product-details/{id}', 'getProductDetails')->name('sales.product.details');
+Route::controller(SaleController::class)->group(function () {    
+    Route::get('sale-items', 'getSaleItems')->name('sale.item');
 });
 
 Route::controller(PagesController::class)->group(function () {
