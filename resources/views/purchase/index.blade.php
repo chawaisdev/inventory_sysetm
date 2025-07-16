@@ -54,24 +54,20 @@
                                         <!-- Product Names Column -->
                                         <td>
                                             @foreach ($purchase->items as $item)
-                                                <span class="badge bg-info text-dark">{{ $item->product_name }}</span>
+                                                <span class="badge bg-info">{{ $item->product_name }}</span>
                                             @endforeach
                                         </td>
 
                                         <td>{{ number_format($purchase->total_amount, 2) }}</td>
                                         <td>{{ number_format($purchase->paid_amount, 2) }}</td>
                                         <td>{{ number_format($purchase->due_amount, 2) }}</td>
-                                        <td>{{ ucfirst($purchase->payment_method) }}</td>
+                                        <td><span class="badge bg-success ">{{ ucfirst($purchase->payment_method) }}</span></td>
                                         <td>{{ $purchase->date->format('Y-m-d') }}</td>
                                         <td>{{ $purchase->note }}</td>
                                         <td>
                                             <a href="{{ route('purchase.show', $purchase) }}"
                                                 class="btn btn-sm btn-warning">
                                                 <i class="fa-solid fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('purchase.edit', $purchase->id) }}"
-                                                class="btn btn-sm btn-warning">
-                                                <i class="fas fa-edit"></i>
                                             </a>
                                             <form action="{{ route('purchase.destroy', $purchase->id) }}" method="POST"
                                                 style="display:inline-block;">
@@ -82,6 +78,10 @@
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </form>
+                                            <a href="{{ route('purchase.edit', $purchase->id) }}"
+                                                class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
                                             <button class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                 data-bs-target="#payModal{{ $purchase->id }}">
                                                 <i class="fas fa-money-bill-wave"></i>

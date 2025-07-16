@@ -54,7 +54,7 @@
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->address }}</td>
                                             <td>{{ $user->phone }}</td>
-                                            <td>{{ $user->created_at }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M, Y') }}</td>
                                             <td>
                                                 <!-- DELETE USER BUTTON -->
                                                 <form action="{{ route('adduser.destroy', $user->id) }}" method="POST"

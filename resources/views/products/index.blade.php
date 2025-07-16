@@ -56,7 +56,7 @@
                                             <td>{{ $products->name }}</td>
                                             <td>{{ $products->purchase_price }}</td>
                                             <td>{{ $products->sale_price }}</td>
-                                            <td>{{ $products->stock }}</td>
+                                            <td><span class="badge bg-success">{{ $products->stock }}</span></td>
                                             <td>{{ $products->unit }}</td>
                                             <td>{{ $products->discount }}</td>
                                             <td>
