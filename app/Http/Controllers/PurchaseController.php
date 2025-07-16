@@ -312,4 +312,9 @@ class PurchaseController extends Controller
         return redirect()->back()->with('success', 'Product returned and records updated with discount considered.');
     }
 
+    public function getPurchaseReturns()
+    {
+        $returns = PurchaseReturn::with('purchase.user')->get();
+        return view('purchase.return', compact('returns'));
+    }
 }

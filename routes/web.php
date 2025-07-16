@@ -16,23 +16,22 @@ Route::controller(DashboardController::class)->group(function () {
     Route::get('index', 'index')->name('dashboard.index');
 });
 
-// Brand Controller
+// RESOURCE ROUTES
 Route::resource('brands', BrandController::class);
-
-// Add User Controller
 Route::resource('adduser', AddUserController::class);
-
-// Product Controller
 Route::resource('products', ProductController::class);
+Route::resource('sales', SaleController::class);
+Route::resource('purchase', PurchaseController::class);
+
 
 // Purchase Controller
 Route::controller(PurchaseController::class)->group(function () {
     Route::get('purchase-items', 'getPurchaseItems')->name('purchase.items');
     Route::post('purchase/return', 'return')->name('purchase.return');
+    Route::get('purchase-returns', 'getPurchaseReturns')->name('purchase.return');
 
     Route::post('purchase/payment/{purchase}', 'storePayment')->name('purchase.payment');
 });
-Route::resource('purchase', PurchaseController::class);
 
 // Sale Controller
 Route::controller(SaleController::class)->group(function () {
@@ -46,8 +45,6 @@ Route::controller(PagesController::class)->group(function () {
 
 });
 Route::get('/sales/{id}/receipt', [SaleController::class, 'receipt']);
-
-Route::resource('sales', SaleController::class);
 
 
 
