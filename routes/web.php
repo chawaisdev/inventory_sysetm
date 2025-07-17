@@ -47,6 +47,7 @@ Route::controller(PagesController::class)->group(function () {
 });
 Route::get('/sales/{id}/receipt', [SaleController::class, 'receipt']);
 
+Route::post('/sale/return', [SaleController::class, 'storeReturn'])->name('sale.return');
 
 
 
