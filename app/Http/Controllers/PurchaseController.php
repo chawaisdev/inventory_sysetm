@@ -228,18 +228,22 @@ class PurchaseController extends Controller
             'date' => 'required|date',
         ]);
 
-        // Store in transactions
+        // Generate random transaction/invoice number
+        $transactionNo = 'TXN-' . now()->format('Ymd') . '-' . rand(1000, 9999);
+
+        // Save to transactions table
         Transaction::create([
-        'user_id' => $purchase->user_id,  // supplier
+            'user_id' => $purchase->user_id,
             'purchase_id' => $purchase->id,
             'amount' => $request->paid_amount,
             'payment_method' => $request->payment_method,
             'type' => 'credit',
             'date' => $request->date,
-            'note' => $request->note,
+            'invoice_no' => $transactionNo, // ✅ add transaction number
+            'note' => $request->note ?? 'Partial payment for purchase #' . $purchase->id,
         ]);
 
-        // Update purchase paid_amount
+        // Update purchase payment amounts
         $purchase->paid_amount += $request->paid_amount;
         $purchase->due_amount = $purchase->total_amount - $purchase->paid_amount;
         $purchase->save();
