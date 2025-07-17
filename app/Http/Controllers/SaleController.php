@@ -223,4 +223,31 @@ class SaleController extends Controller
         return view('sales.item', compact('sale'));
     }
 
+    public function SalePayment(Request $request, Sale $sale)
+    {
+        $request->validate([
+            'paid_amount' => 'required|numeric|min:1',
+            'payment_method' => 'required|string',
+            'date' => 'required|date',
+        ]);
+
+        // Store in transactions
+        Transaction::create([
+        'user_id' => $sale->user_id,  // supplier
+            'sale_id' => $sale->id,
+            'amount' => $request->paid_amount,
+            'payment_method' => $request->payment_method,
+            'type' => 'credit',
+            'date' => $request->date,
+            'note' => $request->note,
+        ]);
+
+        // Update purchase paid_amount
+        $sale->paid_amount += $request->paid_amount;
+        $sale->due_amount = $sale->total_amount - $sale->paid_amount;
+        $sale->save();
+
+        return redirect()->back()->with('success', 'Payment recorded successfully.');
+    }
+
 }

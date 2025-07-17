@@ -62,7 +62,45 @@
                                         <td>{{ $sale->date->format('Y-m-d') }}</td>
                                         <td>{{ $sale->note }}</td>
                                         <td>
-                                            <!-- your action buttons here -->
+                                            <button class="btn btn-sm btn-primary toggle-payment"
+                                                data-id="{{ $sale->id }}">Pay</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Expandable payment row -->
+                                    <tr id="payment-row-{{ $sale->id }}" class="d-none">
+                                        <td colspan="11">
+                                            <form action="{{ route('sale.payment', $sale->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="user_id" value="{{ $sale->user_id }}">
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <label>Paid Amount</label>
+                                                        <input type="number" name="paid_amount" class="form-control"
+                                                            required>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>Payment Method</label>
+                                                        <select name="payment_method" class="form-control" required>
+                                                            <option value="">Select</option>
+                                                            <option value="cash">Cash</option>
+                                                            <option value="bank">Bank</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>Date</label>
+                                                        <input type="date" name="date" class="form-control"
+                                                            value="{{ now()->toDateString() }}" required>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>Note</label>
+                                                        <input type="text" name="note" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <button class="btn btn-sm btn-success">Submit Payment</button>
+                                                </div>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -73,4 +111,13 @@
             </div>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('.toggle-payment').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const row = document.getElementById('payment-row-' + id);
+                row.classList.toggle('d-none');
+            });
+        });
+    </script>
 @endsection

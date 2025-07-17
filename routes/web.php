@@ -36,6 +36,8 @@ Route::controller(PurchaseController::class)->group(function () {
 // Sale Controller
 Route::controller(SaleController::class)->group(function () {    
     Route::get('sale-items', 'getSaleItems')->name('sale.item');
+    Route::post('sale/payment/{purchase}', 'SalePayment')->name('sale.payment');
+
 });
 
 Route::controller(PagesController::class)->group(function () {
