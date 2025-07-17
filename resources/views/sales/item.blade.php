@@ -30,6 +30,7 @@
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                                 <th>Discount (%)</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>

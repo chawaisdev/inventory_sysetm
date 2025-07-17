@@ -57,9 +57,11 @@ class SaleController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
+            $invoiceNo = 'INV-' . strtoupper(uniqid());
+
             $sale = Sale::create([
                 'user_id' => $request->user_id,
-                'invoice_no' => 'INV-' . strtoupper(uniqid()),
+                'invoice_no' => $invoiceNo,
                 'date' => $request->date,
                 'total_amount' => $request->total_amount,
                 'paid_amount' => $request->paid_amount,
@@ -92,8 +94,9 @@ class SaleController extends Controller
             }
 
             Transaction::create([
+                'invoice_no' => $invoiceNo, // ✅ Send invoice number here
                 'user_id' => $request->user_id,
-                'purchase_id' => $sale->id,
+                'sale_id' => $sale->id,
                 'amount' => $request->paid_amount,
                 'payment_method' => $request->payment_method,
                 'type' => 'Credit',
@@ -158,27 +161,27 @@ class SaleController extends Controller
 
         $sale->saleItems()->delete();
 
-    foreach ($request->product_id as $index => $productId) {
-        $price = floatval($request->price[$index]);
-        $quantity = intval($request->quantity[$index]);
-        $discount = floatval($request->discount[$index]);
+        foreach ($request->product_id as $index => $productId) {
+            $price = floatval($request->price[$index]);
+            $quantity = intval($request->quantity[$index]);
+            $discount = floatval($request->discount[$index]);
 
-        $subTotal = $price * $quantity;
-        $discountAmount = ($subTotal * $discount) / 100;
-        $total = $subTotal - $discountAmount;
+            $subTotal = $price * $quantity;
+            $discountAmount = ($subTotal * $discount) / 100;
+            $total = $subTotal - $discountAmount;
 
-        // Round total to 2 decimals to avoid float precision issues
-        $total = round($total, 2);
+            // Round total to 2 decimals to avoid float precision issues
+            $total = round($total, 2);
 
-        SaleItem::create([
-            'sale_id' => $sale->id,
-            'product_id' => $productId,
-            'quantity' => $quantity,
-            'unit_price' => round($price, 2),
-            'discount' => round($discount, 2),
-            'total_price' => $total,
-        ]);
-    }
+            SaleItem::create([
+                'sale_id' => $sale->id,
+                'product_id' => $productId,
+                'quantity' => $quantity,
+                'unit_price' => round($price, 2),
+                'discount' => round($discount, 2),
+                'total_price' => $total,
+            ]);
+        }
 
         $transaction = Transaction::where('sale_id', $sale->id)->first();
 
@@ -232,7 +235,7 @@ class SaleController extends Controller
 
         // Store in transactions
         Transaction::create([
-        'user_id' => $sale->user_id,  // supplier
+            'user_id' => $sale->user_id,  // supplier
             'sale_id' => $sale->id,
             'amount' => $request->paid_amount,
             'payment_method' => $request->payment_method,
@@ -262,7 +265,7 @@ class SaleController extends Controller
         $sale = Sale::with('user')->findOrFail($request->sale_id);
         $customerId = $sale->user_id;
 
-        $item = SaleItem::where('sale_id', $request->sale_id)
+        $item = SaleItem::where('sale_id', $sale->id)
             ->where('product_id', $request->product_id)
             ->firstOrFail();
 
@@ -271,39 +274,57 @@ class SaleController extends Controller
         }
 
         $unitPrice = $item->unit_price;
-        $returnAmount = $unitPrice * $request->quantity;
+        $returnQuantity = $request->quantity;
+        $returnAmount = $unitPrice * $returnQuantity;
 
         // Save Sale Return
         SaleReturn::create([
-            'sale_id' => $request->sale_id,
+            'sale_id' => $sale->id,
             'user_id' => $customerId,
             'product_id' => $request->product_id,
             'price' => $unitPrice,
-            'quantity' => $request->quantity,
+            'quantity' => $returnQuantity,
             'return_amount' => $returnAmount,
             'return_date' => $request->return_date,
         ]);
 
         // Update SaleItem
-        $item->quantity -= $request->quantity;
+        $item->quantity -= $returnQuantity;
         $item->total_price = $item->quantity * $unitPrice;
         $item->save();
 
-        // Update Sale
+        // Restore product stock
+        $product = Product::find($request->product_id);
+        if ($product) {
+            $product->stock += $returnQuantity;
+            $product->save();
+        }
+
+        // Update Sale: subtract from total_amount
         $sale->total_amount -= $returnAmount;
+
+        // Optional: if paid_amount > total_amount, refund excess or adjust
+        if ($sale->paid_amount >= $returnAmount) {
+            $sale->paid_amount -= $returnAmount;
+        } else {
+            $sale->paid_amount = 0;
+        }
+
         $sale->due_amount = $sale->total_amount - $sale->paid_amount;
         $sale->save();
 
-        // Log Transaction with custom fields
+        // Save Transaction with transaction_no and product_id
         Transaction::create([
-            'invoice_id' => $sale->invoice_no,
+            'transaction_no' => 'TRX-' . strtoupper(uniqid()),
+            'invoice_no' => $sale->invoice_no,
             'user_id' => $customerId,
             'sale_id' => $sale->id,
+            'product_id' => $request->product_id, // ✅ this now works if column exists
             'amount' => $returnAmount,
             'payment_method' => 'bank',
-            'type' => 'credit',
+            'type' => 'Credit',
             'date' => $request->return_date,
-            'note' => 'Return Sale',
+            'note' => 'Sale Return',
         ]);
 
         return redirect()->back()->with('success', 'Product returned successfully.');
