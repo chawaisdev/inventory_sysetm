@@ -118,7 +118,7 @@ class SaleController extends Controller
      */
     public function edit(string $id)
     {
-        $sale = Sale::with('items')->findOrFail($id);
+        $sale = Sale::with(['saleItems.product', 'user'])->findOrFail($id);
         $users = User::where('user_type', 'customer')->get();
         $brands = Brand::all();
         $products = Product::all();
@@ -144,8 +144,8 @@ class SaleController extends Controller
             'date' => 'required|date',
         ]);
 
-        // Update Sale
         $sale = Sale::findOrFail($id);
+
         $sale->update([
             'user_id' => $request->user_id,
             'date' => $request->date,
@@ -156,33 +156,31 @@ class SaleController extends Controller
             'note' => $request->note,
         ]);
 
-        // Delete old SaleItems
-        $sale->items()->delete();
+        $sale->saleItems()->delete();
 
-        // Re-insert SaleItems
-        foreach ($request->product_id as $index => $productId) {
-            $price = $request->price[$index];
-            $quantity = $request->quantity[$index];
-            $discount = $request->discount[$index];
+    foreach ($request->product_id as $index => $productId) {
+        $price = floatval($request->price[$index]);
+        $quantity = intval($request->quantity[$index]);
+        $discount = floatval($request->discount[$index]);
 
-            $subTotal = $price * $quantity;
-            $discountAmount = ($subTotal * $discount) / 100;
-            $total = $subTotal - $discountAmount;
+        $subTotal = $price * $quantity;
+        $discountAmount = ($subTotal * $discount) / 100;
+        $total = $subTotal - $discountAmount;
 
-            SaleItem::create([
-                'sale_id' => $sale->id,
-                'product_id' => $productId,
-                'quantity' => $quantity,
-                'unit_price' => $price,
-                'discount' => $discount,
-                'total_price' => $total,
-            ]);
-        }
+        // Round total to 2 decimals to avoid float precision issues
+        $total = round($total, 2);
 
-        // Update existing transaction or create one
-        $transaction = Transaction::where('purchase_id', $sale->id)
-            ->where('type', 'sale')
-            ->first();
+        SaleItem::create([
+            'sale_id' => $sale->id,
+            'product_id' => $productId,
+            'quantity' => $quantity,
+            'unit_price' => round($price, 2),
+            'discount' => round($discount, 2),
+            'total_price' => $total,
+        ]);
+    }
+
+        $transaction = Transaction::where('sale_id', $sale->id)->first();
 
         if ($transaction) {
             $transaction->update([
@@ -195,10 +193,10 @@ class SaleController extends Controller
         } else {
             Transaction::create([
                 'user_id' => $request->user_id,
-                'purchase_id' => $sale->id,
+                'sale_id' => $sale->id,
                 'amount' => $request->paid_amount,
                 'payment_method' => $request->payment_method,
-                'type' => 'credit', // or use 'credit' if preferred
+                'type' => 'credit',
                 'date' => $request->date,
                 'note' => $request->note,
             ]);
@@ -252,64 +250,64 @@ class SaleController extends Controller
     }
 
 
-public function storeReturn(Request $request)
-{
-    $request->validate([
-        'sale_id' => 'required|exists:sales,id',
-        'product_id' => 'required|exists:products,id',
-        'quantity' => 'required|integer|min:1',
-        'return_date' => 'required|date',
-    ]);
+    public function storeReturn(Request $request)
+    {
+        $request->validate([
+            'sale_id' => 'required|exists:sales,id',
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'return_date' => 'required|date',
+        ]);
 
-    $sale = Sale::with('user')->findOrFail($request->sale_id);
-    $customerId = $sale->user_id;
+        $sale = Sale::with('user')->findOrFail($request->sale_id);
+        $customerId = $sale->user_id;
 
-    $item = SaleItem::where('sale_id', $request->sale_id)
-        ->where('product_id', $request->product_id)
-        ->firstOrFail();
+        $item = SaleItem::where('sale_id', $request->sale_id)
+            ->where('product_id', $request->product_id)
+            ->firstOrFail();
 
-    if ($item->quantity < $request->quantity) {
-        return back()->with('error', 'Return quantity exceeds sold quantity.');
+        if ($item->quantity < $request->quantity) {
+            return back()->with('error', 'Return quantity exceeds sold quantity.');
+        }
+
+        $unitPrice = $item->unit_price;
+        $returnAmount = $unitPrice * $request->quantity;
+
+        // Save Sale Return
+        SaleReturn::create([
+            'sale_id' => $request->sale_id,
+            'user_id' => $customerId,
+            'product_id' => $request->product_id,
+            'price' => $unitPrice,
+            'quantity' => $request->quantity,
+            'return_amount' => $returnAmount,
+            'return_date' => $request->return_date,
+        ]);
+
+        // Update SaleItem
+        $item->quantity -= $request->quantity;
+        $item->total_price = $item->quantity * $unitPrice;
+        $item->save();
+
+        // Update Sale
+        $sale->total_amount -= $returnAmount;
+        $sale->due_amount = $sale->total_amount - $sale->paid_amount;
+        $sale->save();
+
+        // Log Transaction with custom fields
+        Transaction::create([
+            'invoice_id' => $sale->invoice_no,
+            'user_id' => $customerId,
+            'sale_id' => $sale->id,
+            'amount' => $returnAmount,
+            'payment_method' => 'bank',
+            'type' => 'credit',
+            'date' => $request->return_date,
+            'note' => 'Return Sale',
+        ]);
+
+        return redirect()->back()->with('success', 'Product returned successfully.');
     }
-
-    $unitPrice = $item->unit_price;
-    $returnAmount = $unitPrice * $request->quantity;
-
-    // Save Sale Return
-    SaleReturn::create([
-        'sale_id' => $request->sale_id,
-        'user_id' => $customerId,
-        'product_id' => $request->product_id,
-        'price' => $unitPrice,
-        'quantity' => $request->quantity,
-        'return_amount' => $returnAmount,
-        'return_date' => $request->return_date,
-    ]);
-
-    // Update SaleItem
-    $item->quantity -= $request->quantity;
-    $item->total_price = $item->quantity * $unitPrice;
-    $item->save();
-
-    // Update Sale
-    $sale->total_amount -= $returnAmount;
-    $sale->due_amount = $sale->total_amount - $sale->paid_amount;
-    $sale->save();
-
-    // Log Transaction with custom fields
-    Transaction::create([
-        'invoice_id' => $sale->invoice_no,
-        'user_id' => $customerId,
-        'sale_id' => $sale->id,
-        'amount' => $returnAmount,
-        'payment_method' => 'bank',
-        'type' => 'credit',
-        'date' => $request->return_date,
-        'note' => 'Return Sale',
-    ]);
-
-    return redirect()->back()->with('success', 'Product returned successfully.');
-}
 
 
 

@@ -261,11 +261,9 @@ class PurchaseController extends Controller
             'return_date' => 'required|date',
         ]);
 
-        // Get the purchase and supplier
         $purchase = Purchase::with('user')->findOrFail($request->purchase_id);
         $supplierId = $purchase->user_id;
 
-        // Get the specific purchase item
         $item = PurchaseItem::where('purchase_id', $request->purchase_id)
             ->where('product_name', $request->product_name)
             ->firstOrFail();
@@ -274,14 +272,10 @@ class PurchaseController extends Controller
             return back()->with('error', 'Return quantity exceeds purchased quantity.');
         }
 
-        // Calculate actual price after discount per unit
-        $discount = $item->discount ?? 0; // fallback in case it's null
+        $discount = $item->discount ?? 0;
         $unitNetPrice = $item->price - $discount;
-
-        // Calculate return amount based on net price
         $returnAmount = $unitNetPrice * $request->quantity;
 
-        // Save to purchase_returns
         PurchaseReturn::create([
             'purchase_id' => $request->purchase_id,
             'user_id' => $supplierId,
@@ -292,17 +286,16 @@ class PurchaseController extends Controller
             'return_date' => $request->return_date,
         ]);
 
-        // Update purchase item
         $item->quantity -= $request->quantity;
         $item->line_total = ($item->price - $discount) * $item->quantity;
         $item->save();
 
-        // Update purchase totals
         $purchase->total_amount -= $returnAmount;
         $purchase->due_amount = $purchase->total_amount - $purchase->paid_amount;
         $purchase->save();
 
-        // Log transaction
+        $transactionNo = 'TXN-' . now()->format('Ymd') . '-' . rand(1000, 9999);
+
         Transaction::create([
             'user_id' => $supplierId,
             'purchase_id' => $purchase->id,
@@ -310,10 +303,11 @@ class PurchaseController extends Controller
             'payment_method' => 'bank',
             'type' => 'credit',
             'date' => $request->return_date,
+            'invoice_no' => $transactionNo,
             'note' => 'Returned: ' . $request->product_name,
         ]);
 
-        return redirect()->back()->with('success', 'Product returned and records updated with discount considered.');
+        return redirect()->back()->with('success', 'Product returned and records updated.');
     }
 
     public function getPurchaseReturns()
