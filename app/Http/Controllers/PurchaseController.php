@@ -32,82 +32,84 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-        $users = User::where('user_type', 'supplier')->get();
-        $brands = Brand::all();
-        $products = Product::all(); // 🆕 fetch products
-        return view('purchase.create', compact('users', 'brands', 'products'));
-    }
+        $users = User::all(); // Suppliers
+        $products = Product::all();
+        $brands = Brand::all(); // Add this line
 
+        return view('purchase.create', compact('users', 'products', 'brands'));
+    }
 
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'brand_id' => 'required|array',
-        'total_amount' => 'required|numeric',
-        'paid_amount' => 'required|numeric',
-        'payment_method' => 'required|string|max:50',
-        'date' => 'required|date',
-        'note' => 'nullable|string|max:500',
-        'product_id' => 'required|array',
-        'price' => 'required|array',
-        'quantity' => 'required|array',
-        'discount' => 'required|array',
-        'line_total' => 'required|array',
-    ]);
-
-    // Create main purchase record
-    $purchase = Purchase::create([
-        'user_id' => $request->user_id,
-        'invoice_no' => 'INV-' . date('Y') . '-' . rand(1000, 9999),
-        'total_amount' => $request->total_amount,
-        'paid_amount' => $request->paid_amount,
-        'due_amount' => $request->total_amount - $request->paid_amount,
-        'payment_method' => $request->payment_method,
-        'date' => $request->date,
-        'note' => $request->note,
-    ]);
-
-    foreach ($request->product_id as $index => $productId) {
-        $price = $request->price[$index];
-        $quantity = $request->quantity[$index];
-
-        // Save purchase item
-        PurchaseItem::create([
-            'purchase_id' => $purchase->id,
-            'brand_id' => $request->brand_id[$index],
-            'product_id' => $productId,
-            'price' => $price,
-            'quantity' => $quantity,
-            'discount' => $request->discount[$index],
-            'line_total' => $request->line_total[$index],
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'brand_id' => 'required|array',
+            'total_amount' => 'required|numeric',
+            'paid_amount' => 'required|numeric',
+            'payment_method' => 'required|string|max:50',
+            'date' => 'required|date',
+            'note' => 'nullable|string|max:500',
+            'product_id' => 'required|array',
+            'price' => 'required|array',
+            'quantity' => 'required|array',
+            'discount' => 'required|array',
+            'line_total' => 'required|array',
         ]);
 
-        // ✅ Update product purchase_price and stock
-        $product = Product::find($productId);
-        if ($product) {
-            $product->purchase_price = $price;
-            $product->stock += $quantity;
-            $product->save();
+        // Create main purchase record
+        $purchase = Purchase::create([
+            'user_id' => $request->user_id,
+            'invoice_no' => 'INV-' . date('Y') . '-' . rand(1000, 9999),
+            'total_amount' => $request->total_amount,
+            'paid_amount' => $request->paid_amount,
+            'due_amount' => $request->total_amount - $request->paid_amount,
+            'payment_method' => $request->payment_method,
+            'date' => $request->date,
+            'note' => $request->note,
+        ]);
+
+        foreach ($request->product_id as $index => $productId) {
+            $price = $request->price[$index];
+            $quantity = $request->quantity[$index];
+            $discount = $request->discount[$index]; // ✅ Define this
+
+            // Save purchase item
+            PurchaseItem::create([
+                'purchase_id' => $purchase->id,
+                'brand_id' => $request->brand_id[$index],
+                'product_id' => $productId,
+                'price' => $price,
+                'quantity' => $quantity,
+                'discount' => $discount,
+                'line_total' => $request->line_total[$index],
+            ]);
+
+            // ✅ Update product purchase_price, discount, and stock
+            $product = Product::find($productId);
+            if ($product) {
+                $product->purchase_price = $price;
+                $product->discount = $discount; // ✅ Now works correctly
+                $product->stock += $quantity;
+                $product->save();
+            }
         }
+
+        // Create payment transaction
+        Transaction::create([
+            'user_id' => $request->user_id,
+            'purchase_id' => $purchase->id,
+            'amount' => $request->paid_amount,
+            'payment_method' => $request->payment_method,
+            'type' => 'credit',
+            'date' => $request->date,
+            'note' => $request->note,
+        ]);
+
+        return redirect()->route('purchase.index')->with('success', 'Purchase created successfully.');
     }
-
-    // Create payment transaction
-    Transaction::create([
-        'user_id' => $request->user_id,
-        'purchase_id' => $purchase->id,
-        'amount' => $request->paid_amount,
-        'payment_method' => $request->payment_method,
-        'type' => 'credit',
-        'date' => $request->date,
-        'note' => $request->note,
-    ]);
-
-    return redirect()->route('purchase.index')->with('success', 'Purchase created successfully.');
-}
 
 
     /**
