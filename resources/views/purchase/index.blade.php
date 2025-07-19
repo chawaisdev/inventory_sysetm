@@ -54,7 +54,7 @@
                                         <!-- Product Names Column -->
                                         <td>
                                             @foreach ($purchase->items as $item)
-                                                <span class="badge bg-info">{{ $item->product_name }}</span>
+                                                <span class="badge bg-info">{{ $item->product->name }}</span>
                                             @endforeach
                                         </td>
 
