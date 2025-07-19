@@ -27,8 +27,7 @@ Route::resource('purchase', PurchaseController::class);
 // Purchase Controller
 Route::controller(PurchaseController::class)->group(function () {
     Route::get('purchase-items', 'getPurchaseItems')->name('purchase.items');
-    Route::post('purchase/return', 'return')->name('purchase.return');
-    Route::get('purchase-returns', 'getPurchaseReturns')->name('purchase.return');
+    Route::post('purchase/returns', 'return')->name('purchase.return');
 
     Route::post('purchase/payment/{purchase}', 'storePayment')->name('purchase.payment');
 });
