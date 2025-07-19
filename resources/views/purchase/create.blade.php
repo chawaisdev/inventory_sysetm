@@ -34,7 +34,7 @@
                         <table class="table table-bordered" id="product_table">
                             <thead>
                                 <tr>
-                                    <th>Product Name</th>
+                                    <th>Product</th>
                                     <th>Brand</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
@@ -47,7 +47,14 @@
                             </thead>
                             <tbody id="product_rows">
                                 <tr>
-                                    <td><input type="text" name="product_name[]" class="form-control" required></td>
+                                    <td>
+                                        <select name="product_id[]" class="form-control" required>
+                                            <option value="">Select Product</option>
+                                            @foreach ($products as $product)
+                                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
                                     <td style="min-width: 180px;">
                                         <select name="brand_id[]" class="form-control" required>
                                             <option value="">Select Brand</option>
@@ -56,14 +63,10 @@
                                             @endforeach
                                         </select>
                                     </td>
-
-                                    <td><input type="number" step="0.01" name="price[]" class="form-control price"
-                                            required></td>
+                                    <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
                                     <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
-                                    <td><input type="number" step="0.01" name="discount[]" class="form-control discount"
-                                            value="0"></td>
-                                    <td><input type="number" step="0.01" name="line_total[]"
-                                            class="form-control line_total" readonly></td>
+                                    <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0"></td>
+                                    <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
                                     <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
                                 </tr>
                             </tbody>
@@ -72,20 +75,17 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label class="form-label">Total Amount</label>
-                                <input type="number" step="0.01" name="total_amount" id="total_amount"
-                                    class="form-control" readonly>
+                                <input type="number" step="0.01" name="total_amount" id="total_amount" class="form-control" readonly>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label class="form-label">Paid Amount</label>
-                                <input type="number" step="0.01" name="paid_amount" id="paid_amount"
-                                    class="form-control" required>
+                                <input type="number" step="0.01" name="paid_amount" id="paid_amount" class="form-control" required>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label class="form-label">Due Amount</label>
-                                <input type="number" step="0.01" name="due_amount" id="due_amount" class="form-control"
-                                    readonly>
+                                <input type="number" step="0.01" name="due_amount" id="due_amount" class="form-control" readonly>
                             </div>
 
                             <div class="mb-3 col-md-6">
@@ -99,8 +99,7 @@
 
                             <div class="mb-3 col-md-6">
                                 <label class="form-label">Date</label>
-                                <input type="date" name="date" class="form-control"
-                                    value="{{ now()->toDateString() }}" required>
+                                <input type="date" name="date" class="form-control" value="{{ now()->toDateString() }}" required>
                             </div>
 
                             <div class="mb-3 col-md-12">
@@ -116,9 +115,10 @@
         </div>
     </div>
 
-    {{-- Pass brands to JavaScript --}}
+    {{-- Pass brands and products to JS --}}
     <script>
         const brands = @json($brands);
+        const products = @json($products);
     </script>
 
     <script>
@@ -167,28 +167,37 @@
                 brandOptions += `<option value="${brand.id}">${brand.brand_name}</option>`;
             });
 
+            let productOptions = '<option value="">Select Product</option>';
+            products.forEach(product => {
+                productOptions += `<option value="${product.id}">${product.name}</option>`;
+            });
+
             let newRow = `
-            <tr>
-                <td><input type="text" name="product_name[]" class="form-control" required></td>
-                <td>
-                    <select name="brand_id[]" class="form-control" required>
-                        ${brandOptions}
-                    </select>
-                </td>
-                <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
-                <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
-                <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0"></td>
-                <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
-                <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
-            </tr>
-        `;
+                <tr>
+                    <td>
+                        <select name="product_id[]" class="form-control" required>
+                            ${productOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="brand_id[]" class="form-control" required>
+                            ${brandOptions}
+                        </select>
+                    </td>
+                    <td><input type="number" step="0.01" name="price[]" class="form-control price" required></td>
+                    <td><input type="number" name="quantity[]" class="form-control quantity" required></td>
+                    <td><input type="number" step="0.01" name="discount[]" class="form-control discount" value="0"></td>
+                    <td><input type="number" step="0.01" name="line_total[]" class="form-control line_total" readonly></td>
+                    <td><button type="button" class="btn btn-sm btn-danger remove_row">×</button></td>
+                </tr>
+            `;
+
             document.getElementById('product_rows').insertAdjacentHTML('beforeend', newRow);
         });
 
         document.getElementById('product_rows').addEventListener('click', function(e) {
             if (e.target.classList.contains('remove_row')) {
-                let row = e.target.closest('tr');
-                row.remove();
+                e.target.closest('tr').remove();
                 calculateGrandTotal();
             }
         });

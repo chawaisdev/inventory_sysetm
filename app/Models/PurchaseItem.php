@@ -11,10 +11,10 @@ class PurchaseItem extends Model
      protected $fillable = [
         'purchase_id',
         'brand_id',
-        'product_name',
+        'product_id',
         'price',
         'quantity',
-        'discount', // ✅ MUST be fillable
+        'discount',
         'line_total',
     ];
 

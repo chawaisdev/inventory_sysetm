@@ -11,6 +11,8 @@ use App\Http\Controllers\PagesController;
 use Illuminate\Support\Facades\Route;
 
 
+Route::middleware(['auth'])->group(function () {
+
 // Dashboard Controller
 Route::controller(DashboardController::class)->group(function () {
     Route::get('index', 'index')->name('dashboard.index');
@@ -47,6 +49,7 @@ Route::controller(PagesController::class)->group(function () {
 Route::get('/sales/{id}/receipt', [SaleController::class, 'receipt']);
 
 Route::post('/sale/return', [SaleController::class, 'storeReturn'])->name('sale.return');
+});
 
 
 
