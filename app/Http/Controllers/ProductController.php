@@ -35,21 +35,14 @@ class ProductController extends Controller
         $request->validate([
             'brand_id' => 'nullable|string',
             'name' => 'required|string|max:255',
-            'purchase_price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|string',
-            'stock' => 'nullable|string',
-            'unit' => 'nullable|string',
         ]);
 
         $products = new Product();
         $products->brand_id = $request->brand_id;
         $products->name = $request->name;
-        $products->purchase_price = $request->purchase_price;
         $products->sale_price = $request->sale_price;
-        $products->stock = $request->stock;
-        $products->unit = $request->unit;
-        $products->discount = $request->discount;
-        $products->save(); // ✅ Add this line to save the product
+        $products->save(); 
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
@@ -81,20 +74,13 @@ class ProductController extends Controller
         $request->validate([
             'brand_id' => 'nullable|string',
             'name' => 'required|string|max:255',
-            'purchase_price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|string',
-            'stock' => 'nullable|string',
-            'unit' => 'nullable|string',
         ]);
 
         $product = Product::findOrFail($id);
         $product->brand_id = $request->brand_id;
         $product->name = $request->name;
-        $product->purchase_price = $request->purchase_price;
         $product->sale_price = $request->sale_price;
-        $product->stock = $request->stock;
-        $product->unit = $request->unit;
-        $product->discount = $request->discount;
         $product->save();
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');

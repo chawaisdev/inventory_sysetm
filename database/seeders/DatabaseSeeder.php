@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
 
         // Customers (3)
         User::create([
-            'name' => 'Customer One',
+            'name' => 'Ahmad',
             'user_type' => 'Customer',
             'email' => 'customer1@gmail.com',
             'password' => bcrypt('customer123'),
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '111-222-3333',
         ]);
         User::create([
-            'name' => 'Customer Two',
+            'name' => 'Ali',
             'user_type' => 'Customer',
             'email' => 'customer2@gmail.com',
             'password' => bcrypt('customer123'),
@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '222-333-4444',
         ]);
         User::create([
-            'name' => 'Customer Three',
+            'name' => 'Asad',
             'user_type' => 'Customer',
             'email' => 'customer3@gmail.com',
             'password' => bcrypt('customer123'),
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
 
         // Suppliers (3)
         User::create([
-            'name' => 'Supplier One',
+            'name' => 'Raza',
             'user_type' => 'Supplier',
             'email' => 'supplier1@gmail.com',
             'password' => bcrypt('supplier123'),
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '444-555-6666',
         ]);
         User::create([
-            'name' => 'Supplier Two',
+            'name' => 'Faris',
             'user_type' => 'Supplier',
             'email' => 'supplier2@gmail.com',
             'password' => bcrypt('supplier123'),
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '555-666-7777',
         ]);
         User::create([
-            'name' => 'Supplier Three',
+            'name' => 'Farhan',
             'user_type' => 'Supplier',
             'email' => 'supplier3@gmail.com',
             'password' => bcrypt('supplier123'),

@@ -44,46 +44,10 @@
                             </div>
 
                             <div class="mb-3 col-6">
-                                <label class="form-label">Purchase Price</label>
-                                <input type="number" name="purchase_price" class="form-control"
-                                    value="{{ old('purchase_price', $product->purchase_price) }}" required>
-                                @error('purchase_price')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-6">
                                 <label class="form-label">Sale Price</label>
                                 <input type="text" name="sale_price" class="form-control"
                                     value="{{ old('sale_price', $product->sale_price) }}">
                                 @error('sale_price')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-6">
-                                <label class="form-label">Stock</label>
-                                <input type="text" name="stock" class="form-control"
-                                    value="{{ old('stock', $product->stock) }}">
-                                @error('stock')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-6">
-                                <label class="form-label">Unit</label>
-                                <input type="text" name="unit" class="form-control"
-                                    value="{{ old('unit', $product->unit) }}">
-                                @error('unit')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-6">
-                                <label class="form-label">Discount</label>
-                                <input type="text" name="discount" class="form-control"
-                                    value="{{ old('discount', $product->discount) }}">
-                                @error('discount')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
