@@ -138,16 +138,16 @@ class PurchaseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-public function edit(string $id)
-{
-    $users = User::all(); 
-    $brands = Brand::all(); 
-    $products = Product::all(); // Ensure product has brand_id relation loaded
-    $purchase = Purchase::findOrFail($id);
-    $items = PurchaseItem::where('purchase_id', $id)->get();
+    public function edit(string $id)
+    {
+        $users = User::all(); 
+        $brands = Brand::all(); 
+        $products = Product::all(); // Ensure product has brand_id relation loaded
+        $purchase = Purchase::findOrFail($id);
+        $items = PurchaseItem::where('purchase_id', $id)->get();
 
-    return view('purchase.edit', compact('purchase', 'users', 'brands', 'items', 'products'));
-}
+        return view('purchase.edit', compact('purchase', 'users', 'brands', 'items', 'products'));
+    }
 
     /**
      * Update the specified resource in storage.
